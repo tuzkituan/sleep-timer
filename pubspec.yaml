@@ -49,6 +49,8 @@ dev_dependencies:
   # circular: ^0.0.5
   flutter_circular_slider: ^2.5.0
   google_fonts: ^4.0.1
+  audio_session: ^0.1.13
+  volume_control: ^0.1.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
