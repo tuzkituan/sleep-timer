@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'package:volume_control/volume_control.dart';
+
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_circular_slider/flutter_circular_slider.dart';
+import 'package:volume_control/volume_control.dart';
 
 class SleepPage extends StatefulWidget {
   @override
@@ -97,7 +98,7 @@ class _SleepPageState extends State<SleepPage> {
         : (timerValue ~/ 60).toString();
 
     return Padding(
-      padding: const EdgeInsets.all(22.0),
+      padding: const EdgeInsets.all(12.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -105,7 +106,7 @@ class _SleepPageState extends State<SleepPage> {
           Text(
             renderText,
             style: TextStyle(
-              fontSize: isStart ? 70.0 : 110,
+              fontSize: isStart ? 65.0 : 110,
               color: baseColor,
               fontWeight: FontWeight.w400,
             ),
