@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_circular_slider/flutter_circular_slider.dart';
-import 'package:volume_control/volume_control.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shimmer/shimmer.dart';
 
 class SleepPage extends StatefulWidget {
   @override
@@ -11,34 +12,29 @@ class SleepPage extends StatefulWidget {
 }
 
 class _SleepPageState extends State<SleepPage> {
-  final baseColor = Colors.pink[400];
-
+  int MAX_TIME = 3600;
   int INIT_TIME = 900; // 15 minutes
+
   late Timer _timer;
   bool isStart = false;
   // late int timerValue;
   late int timerValue;
 
-  late VolumeControl volumeController;
-  late double currentVolume;
-
   @override
   void initState() {
     super.initState();
-    // timerValue = 15; // 15 minutes
     timerValue = INIT_TIME;
   }
 
   void _updateLabels(int init, int end, int l) {
     setState(() {
-      // timerValue = end;
       timerValue = end * 60;
     });
   }
 
   void startTimer() async {
     final session = await AudioSession.instance;
-    await session.configure(AudioSessionConfiguration.music());
+    await session.configure(const AudioSessionConfiguration.music());
 
     setState(() {
       isStart = true;
@@ -49,7 +45,8 @@ class _SleepPageState extends State<SleepPage> {
       (Timer timer) async {
         if (timerValue == 0) {
           if (await session.setActive(true,
-              avAudioSessionSetActiveOptions: AVAudioSessionSetActiveOptions(1),
+              avAudioSessionSetActiveOptions:
+                  const AVAudioSessionSetActiveOptions(1),
               androidAudioFocusGainType: AndroidAudioFocusGainType.gain)) {
             print("end");
             await session.setActive(false);
@@ -73,7 +70,6 @@ class _SleepPageState extends State<SleepPage> {
   void stopTimer() {
     _timer.cancel();
     setState(() {
-      timerValue = INIT_TIME;
       isStart = false;
     });
   }
@@ -89,78 +85,157 @@ class _SleepPageState extends State<SleepPage> {
     int min = (timeInSecond / 60).floor();
     String minute = min.toString().length <= 1 ? "0$min" : "$min";
     String second = sec.toString().length <= 1 ? "0$sec" : "$sec";
-    return "$minute : $second";
+    return "$minute:$second";
   }
 
-  Widget _renderInside() {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 24.0,
+        right: 24.0,
+        bottom: 24.0,
+        top: 16.0,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Text(
+              "SLEEP TIMER",
+              style: GoogleFonts.archivo(fontSize: 14, letterSpacing: 7)
+                  .copyWith(color: Colors.white),
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: SvgPicture.asset(
+                'assets/sleep_man.svg',
+                width: MediaQuery.of(context).size.width * 0.8,
+              ),
+            ),
+          ),
+          Container(
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.white10,
+            ),
+            child: renderTimeSlider(),
+          ),
+          const SizedBox(height: 24),
+          _renderStartButton()
+        ],
+      ),
+    );
+  }
+
+  Widget renderTimeSlider() {
+    double screenWidth = MediaQuery.of(context).size.width;
     String renderText = isStart
         ? formattedTime(timeInSecond: timerValue)
         : (timerValue ~/ 60).toString();
 
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+    return GestureDetector(
+      onHorizontalDragStart: (details) {
+        if (!isStart) {
+          var x = details.localPosition.dx / (screenWidth);
+          if (x >= 0 && x <= 1) {
+            setState(() {
+              timerValue = (x * MAX_TIME).round();
+            });
+          }
+        }
+      },
+      onHorizontalDragUpdate: (details) {
+        if (!isStart) {
+          var x = details.localPosition.dx / (screenWidth);
+          if (x >= 0 && x <= 1) {
+            setState(() {
+              timerValue = (x * MAX_TIME).round();
+            });
+          }
+        }
+      },
+      child: Stack(
         children: [
-          Text(
-            renderText,
-            style: TextStyle(
-              fontSize: isStart ? 65.0 : 110,
-              color: baseColor,
-              fontWeight: FontWeight.w400,
+          if (isStart)
+            Shimmer.fromColors(
+              baseColor: Colors.white30,
+              highlightColor: Colors.white70,
+              enabled: isStart,
+              period: const Duration(seconds: 2),
+              child: Container(
+                width: double.infinity,
+                height: 80,
+                color: Colors.white10,
+                child: Container(),
+              ),
+            )
+          else
+            Container(
+              width: double.infinity,
+              height: 80,
+              color: Colors.white10,
+              child: Container(),
+            ),
+          Positioned(
+            child: Container(
+              color: Colors.blue[800],
+              width: (timerValue / MAX_TIME) * screenWidth,
+              height: 80,
             ),
           ),
-          const SizedBox(
-            height: 1,
-          ),
-          Text(
-            isStart ? 'have a nice dream!' : 'minutes',
-            style: const TextStyle(fontSize: 20.0, color: Colors.white38),
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              height: 80,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Text(
+                    renderText + (isStart ? "" : " minutes"),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  Widget _renderStartButton() {
+    return ElevatedButton(
+      onPressed: isStart == true ? stopTimer : startTimer,
+      style: ElevatedButton.styleFrom(
+          backgroundColor:
+              isStart ? Colors.red[900]!.withOpacity(0.7) : Colors.transparent,
+          minimumSize: const Size.fromHeight(50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: const BorderSide(color: Colors.white24),
+          )),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          isStart == true
-              ? SizedBox(
-                  height: 270.0,
-                  width: 270.0,
-                  child: _renderInside(),
-                )
-              : SingleCircularSlider(
-                  60,
-                  timerValue ~/ 60,
-                  height: 270.0,
-                  width: 270.0,
-                  primarySectors: isStart ? 0 : 4,
-                  secondarySectors: 0,
-                  baseColor: isStart ? Colors.black : Colors.white12,
-                  selectionColor: isStart ? Colors.black : baseColor,
-                  handlerColor: Colors.white,
-                  handlerOutterRadius: 12.0,
-                  onSelectionChange: _updateLabels,
-                  showHandlerOutter: false,
-                  sliderStrokeWidth: 8.0,
-                  child: _renderInside(),
-                ),
-          ElevatedButton(
-            onPressed: isStart == true ? stopTimer : startTimer,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: baseColor,
+          const SizedBox(width: 4),
+          Text(
+            (isStart ? "stop" : "start").toUpperCase(),
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
             ),
-            child: isStart == true
-                ? const Icon(Icons.stop)
-                : const Icon(Icons.play_arrow),
-          ),
+          )
         ],
       ),
     );
