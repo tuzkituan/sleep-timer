@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sleep_timer/colors/app_colors.dart';
+import 'package:sleep_timer/utils/app_colors.dart';
 import 'package:sleep_timer/screens/sleep_page.dart';
 
 void main() {
