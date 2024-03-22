@@ -51,6 +51,7 @@ dev_dependencies:
   audio_session: ^0.1.13
   flutter_svg: ^2.0.10+1
   shimmer: ^3.0.0
+  flutter_local_notifications: ^17.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

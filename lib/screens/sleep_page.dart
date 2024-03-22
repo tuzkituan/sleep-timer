@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sleep_timer/utils/app_colors.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class SleepPage extends StatefulWidget {
   @override
@@ -14,6 +15,8 @@ class SleepPage extends StatefulWidget {
 }
 
 class _SleepPageState extends State<SleepPage> {
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   int MAX_TIME = 3600;
   int INIT_TIME = 900; // 15 minutes
 
@@ -21,6 +24,7 @@ class _SleepPageState extends State<SleepPage> {
   bool isStart = false;
   // late int timerValue;
   late int timerValue;
+  late int currentNotificationId = 0;
 
   @override
   void initState() {
@@ -32,6 +36,27 @@ class _SleepPageState extends State<SleepPage> {
     setState(() {
       timerValue = end * 60;
     });
+  }
+
+  Future<void> _showNotificationWithActions({int minutes = 0}) async {
+    AndroidNotificationDetails androidNotificationDetails =
+        const AndroidNotificationDetails(
+      "sleep_timer_id",
+      'SleepTimer',
+      channelDescription: 'your channel description',
+      importance: Importance.defaultImportance,
+      priority: Priority.defaultPriority,
+      ticker: 'ticker',
+      ongoing: true,
+      actions: <AndroidNotificationAction>[
+        AndroidNotificationAction('id_1', 'Stop'),
+        AndroidNotificationAction('id_2', 'Extend'),
+      ],
+    );
+    NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(0, "You're set",
+        '${minutes.toString()} minutes remaining', notificationDetails);
   }
 
   void startTimer() async {
@@ -54,16 +79,26 @@ class _SleepPageState extends State<SleepPage> {
             await session.setActive(false);
           } else {}
 
+          flutterLocalNotificationsPlugin.cancelAll();
           setState(() {
             timer.cancel();
+            currentNotificationId = 0;
             timerValue = INIT_TIME;
             isStart = false;
           });
         } else {
-          print('value: ' + timerValue.toString());
+          int min = (timerValue / 60).floor();
           setState(() {
             timerValue--;
           });
+          if (currentNotificationId != min) {
+            _showNotificationWithActions(
+              minutes: min,
+            );
+            setState(() {
+              currentNotificationId = min;
+            });
+          }
         }
       },
     );
@@ -71,8 +106,11 @@ class _SleepPageState extends State<SleepPage> {
 
   void stopTimer() {
     _timer.cancel();
+    flutterLocalNotificationsPlugin.cancelAll();
+
     setState(() {
       isStart = false;
+      currentNotificationId = 0;
     });
   }
 
