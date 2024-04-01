@@ -4,4 +4,9 @@ class AppVariables {
 
   static const double MAIN_PADDING = 24;
   static const double SLIDER_HEIGHT = 60;
+
+  static const int MAX_TIME = 3600;
+  static const int INIT_TIME = 900;
+
+  static const int NOTIFICATION_ID = 0;
 }
