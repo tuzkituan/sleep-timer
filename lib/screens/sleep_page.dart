@@ -44,8 +44,9 @@ class _SleepPageState extends State<SleepPage> {
       "sleep_timer_id",
       'SleepTimer',
       channelDescription: 'your channel description',
-      importance: Importance.defaultImportance,
-      priority: Priority.defaultPriority,
+      // importance: Importance.high,
+      // priority: Priority.high,
+      playSound: false,
       ticker: 'ticker',
       ongoing: true,
       actions: <AndroidNotificationAction>[
@@ -125,12 +126,12 @@ class _SleepPageState extends State<SleepPage> {
     int min = (timeInSecond / 60).floor();
     String minute = min.toString().length <= 1 ? "0$min" : "$min";
     String second = sec.toString().length <= 1 ? "0$sec" : "$sec";
-    return "$minute:$second";
+    return {"minute": minute, "second": second};
   }
 
   @override
   Widget build(BuildContext context) {
-    String renderText = formattedTime(timeInSecond: timerValue);
+    var finalTime = formattedTime(timeInSecond: timerValue);
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -162,47 +163,78 @@ class _SleepPageState extends State<SleepPage> {
                     width: MediaQuery.of(context).size.width * 0.8,
                   ),
                 ),
-                Transform.translate(
-                  offset: const Offset(0, -40),
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.15,
-                    child: Column(
-                      children: [
-                        isStart
-                            ? Shimmer.fromColors(
-                                baseColor: Colors.white30,
-                                highlightColor: Colors.white70,
-                                enabled: isStart,
-                                period: const Duration(seconds: 2),
-                                child: Text(
-                                  renderText,
-                                  style: TextStyle(
-                                    fontSize: isStart ? 70 : 44,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              )
-                            : Text(
-                                renderText,
-                                style: TextStyle(
-                                  fontSize: isStart ? 70 : 44,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
-                                ),
-                              ),
-                        Text(
-                          isStart ? "have a good night!" : "",
-                          style: const TextStyle(
-                            color: Colors.white,
-                          ),
-                        )
-                      ],
-                    ),
+                Text(
+                  isStart ? "have a good night!" : "turn off my music in",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Shimmer.fromColors(
+                  baseColor: isStart ? Colors.white30 : Colors.white70,
+                  highlightColor: isStart ? Colors.white70 : Colors.white70,
+                  enabled: isStart,
+                  period: const Duration(seconds: 2),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        finalTime['minute'],
+                        style: const TextStyle(
+                          fontSize: 60,
+                          height: 0,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      const Text(
+                        "m",
+                        style: TextStyle(
+                          color: Colors.white,
+                          height: 1.6,
+                          fontSize: 28,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 16,
+                      ),
+                      Text(
+                        finalTime['second'],
+                        style: const TextStyle(
+                          fontSize: 60,
+                          height: 0,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      const Text(
+                        "s",
+                        style: TextStyle(
+                          color: Colors.white,
+                          height: 1.6,
+                          fontSize: 28,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )
+                    ],
                   ),
                 ),
               ],
             ),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.1,
           ),
           isStart
               ? Container(
@@ -212,7 +244,7 @@ class _SleepPageState extends State<SleepPage> {
                   clipBehavior: Clip.hardEdge,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
-                    color: Colors.white10,
+                    color: Colors.orange.withOpacity(0.3),
                   ),
                   height: AppVariables.SLIDER_HEIGHT,
                   child: renderTimeSlider(),
@@ -259,25 +291,25 @@ class _SleepPageState extends State<SleepPage> {
           ),
           Positioned(
             child: Container(
-              color: Colors.blue[800],
+              color: Colors.orange[600],
               width: (timerValue / MAX_TIME) * sliderWidth,
               height: AppVariables.SLIDER_HEIGHT,
             ),
           ),
           Positioned(
-            left: (timerValue / MAX_TIME) * sliderWidth - 4,
-            top: 32,
-            bottom: 32,
+            left: (timerValue / MAX_TIME) * sliderWidth - 6,
+            top: AppVariables.SLIDER_HEIGHT / 3.5,
+            bottom: AppVariables.SLIDER_HEIGHT / 3.5,
             child: Container(
-              width: 8,
-              height: 15,
+              width: 12,
+              // height: 15,
               decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: const BorderRadius.all(
-                    Radius.circular(4),
+                    Radius.circular(99),
                   ),
                   border: Border.all(
-                    color: AppColors.primaryColor,
+                    color: AppColors.primaryColor.withOpacity(0.9),
                     width: 3,
                   )),
             ),
