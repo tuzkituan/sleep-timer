@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:sleep_timer/utils/app_colors.dart';
-import 'package:sleep_timer/screens/sleep_page.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:sleep_timer/components/app_title/app_title.dart';
+import 'package:sleep_timer/components/settings_bottom_sheet/settings_bottom_sheet.dart';
+import 'package:sleep_timer/screens/sleep_page.dart';
+import 'package:sleep_timer/themes.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: AppColors.primaryColor,
+    // statusBarColor: AppColors.primaryColor,
     statusBarBrightness: Brightness.light,
     systemNavigationBarColor: Colors.transparent,
     systemNavigationBarDividerColor: Colors.transparent,
@@ -20,7 +23,12 @@ void main() {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
       overlays: [SystemUiOverlay.top]);
 
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => AppTheme(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -32,11 +40,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'SLEEP TIMER',
       themeMode: ThemeMode.dark,
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: AppColors.primaryColor,
-        textTheme: GoogleFonts.archivoTextTheme(),
-      ),
+      darkTheme: AppTheme.of(context, listen: true).currentTheme,
       home: const MyHomePage(),
     );
   }
@@ -79,6 +83,30 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const AppTitle(),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        toolbarHeight: 60,
+        actions: [
+          IconButton(
+            onPressed: () {
+              showModalBottomSheet<void>(
+                context: context,
+                builder: (BuildContext context) {
+                  return SettingsBottomSheet();
+                },
+                isScrollControlled: true,
+              );
+            },
+            icon: const Icon(
+              Icons.settings_outlined,
+              size: 20,
+            ),
+          ),
+        ],
+      ),
       body: SafeArea(top: true, child: SleepPage()),
     );
   }

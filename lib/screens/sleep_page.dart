@@ -2,16 +2,12 @@ import 'dart:async';
 
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:sleep_timer/components/action_button/action_button.dart';
-import 'package:sleep_timer/components/app_title/app_title.dart';
-import 'package:sleep_timer/components/main_timer_text/main_timer_text.dart';
-import 'package:sleep_timer/screens/default_theme/default_theme.dart';
-import 'package:sleep_timer/utils/app_colors.dart';
-import 'package:sleep_timer/utils/app_variables.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:provider/provider.dart';
+import 'package:sleep_timer/screens/default_theme/default_theme.dart';
+import 'package:sleep_timer/screens/earth_theme/earth_theme.dart';
+import 'package:sleep_timer/themes.dart';
+import 'package:sleep_timer/utils/app_variables.dart';
 
 class SleepPage extends StatefulWidget {
   @override
@@ -134,8 +130,22 @@ class _SleepPageState extends State<SleepPage> {
   @override
   Widget build(BuildContext context) {
     var finalTime = formattedTime(timeInSecond: timerValue);
+    AppThemeKeys currentTheme = Provider.of<AppTheme>(context).currentThemeKey;
 
-    return DefaultTheme(
+    if (currentTheme == AppThemeKeys.theme0) {
+      return DefaultTheme(
+          isStart: isStart,
+          timerValue: timerValue,
+          startTimer: startTimer,
+          stopTimer: stopTimer,
+          finalTime: finalTime,
+          onSliderChange: (int value) {
+            setState(() {
+              timerValue = value;
+            });
+          });
+    }
+    return EarthTheme(
         isStart: isStart,
         timerValue: timerValue,
         startTimer: startTimer,

@@ -7,6 +7,4 @@ class AppVariables {
 
   static const int MAX_TIME = 3600;
   static const int INIT_TIME = 900;
-
-  static const int NOTIFICATION_ID = 0;
 }

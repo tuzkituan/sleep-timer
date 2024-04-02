@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sleep_timer/utils/app_colors.dart';
+import 'package:sleep_timer/themes.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
 
 class TimeSlider extends StatelessWidget {
@@ -23,7 +23,7 @@ class TimeSlider extends StatelessWidget {
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        color: AppColors.sliderColor.withOpacity(0.3),
+        color: AppTheme.of(context).currentTheme.splashColor.withOpacity(0.1),
       ),
       height: AppVariables.SLIDER_HEIGHT,
       child: GestureDetector(
@@ -53,7 +53,7 @@ class TimeSlider extends StatelessWidget {
             ),
             Positioned(
               child: Container(
-                color: AppColors.sliderColor,
+                color: AppTheme.of(context).currentTheme.splashColor,
                 width: (timerValue / AppVariables.MAX_TIME) * sliderWidth,
                 height: AppVariables.SLIDER_HEIGHT,
               ),
@@ -71,7 +71,10 @@ class TimeSlider extends StatelessWidget {
                     Radius.circular(99),
                   ),
                   border: Border.all(
-                    color: AppColors.primaryColor.withOpacity(0.9),
+                    color: AppTheme.of(context)
+                        .currentTheme
+                        .primaryColor
+                        .withOpacity(0.9),
                     width: 3,
                   ),
                 ),

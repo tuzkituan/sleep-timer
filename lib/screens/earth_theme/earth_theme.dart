@@ -6,7 +6,7 @@ import 'package:sleep_timer/components/time_slider/time_slider.dart';
 import 'package:sleep_timer/themes.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
 
-class DefaultTheme extends StatelessWidget {
+class EarthTheme extends StatelessWidget {
   final bool isStart;
   final int timerValue;
   final void Function() startTimer;
@@ -14,7 +14,7 @@ class DefaultTheme extends StatelessWidget {
   final Map<String, dynamic> finalTime;
   final void Function(int sliderValue) onSliderChange;
 
-  DefaultTheme(
+  EarthTheme(
       {super.key,
       required this.isStart,
       required this.timerValue,
@@ -25,7 +25,7 @@ class DefaultTheme extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String character = ThemeCharacter[AppThemeKeys.theme0]!;
+    String character = ThemeCharacter[AppThemeKeys.theme1]!;
 
     return Padding(
       padding: const EdgeInsets.only(
