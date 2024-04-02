@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sleep_timer/themes.dart';
+import 'package:sleep_timer/controllers/settings_controller.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
 
 class TimeSlider extends StatelessWidget {
@@ -18,12 +18,16 @@ class TimeSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double sliderWidth = screenWidth - AppVariables.MAIN_PADDING * 2;
+    int maxTime = SettingsController.of(context).maxTime;
 
     return Container(
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        color: AppTheme.of(context).currentTheme.splashColor.withOpacity(0.1),
+        color: SettingsController.of(context)
+            .currentTheme
+            .cardColor
+            .withOpacity(0.3),
       ),
       height: AppVariables.SLIDER_HEIGHT,
       child: GestureDetector(
@@ -31,7 +35,7 @@ class TimeSlider extends StatelessWidget {
           if (!isStart) {
             var x = details.localPosition.dx / sliderWidth;
             if (x >= 0 && x <= 1) {
-              onChange((x * AppVariables.MAX_TIME).round());
+              onChange((x * maxTime * 60).round());
             }
           }
         },
@@ -39,7 +43,7 @@ class TimeSlider extends StatelessWidget {
           if (!isStart) {
             var x = details.localPosition.dx / sliderWidth;
             if (x >= 0 && x <= 1) {
-              onChange((x * AppVariables.MAX_TIME).round());
+              onChange((x * maxTime * 60).round());
             }
           }
         },
@@ -53,33 +57,38 @@ class TimeSlider extends StatelessWidget {
             ),
             Positioned(
               child: Container(
-                color: AppTheme.of(context).currentTheme.splashColor,
-                width: (timerValue / AppVariables.MAX_TIME) * sliderWidth,
+                color: SettingsController.of(context)
+                    .currentTheme
+                    .cardColor
+                    .withOpacity(0.4),
+                width: (timerValue / (maxTime * 60)) * sliderWidth,
                 height: AppVariables.SLIDER_HEIGHT,
               ),
             ),
-            Positioned(
-              left: (timerValue / AppVariables.MAX_TIME) * sliderWidth - 6,
-              top: AppVariables.SLIDER_HEIGHT / 3.5,
-              bottom: AppVariables.SLIDER_HEIGHT / 3.5,
-              child: Container(
-                width: 12,
-                // height: 15,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(99),
+            isStart
+                ? Container()
+                : Positioned(
+                    left: (timerValue / (maxTime * 60)) * sliderWidth - 6,
+                    top: AppVariables.SLIDER_HEIGHT / 3.5,
+                    bottom: AppVariables.SLIDER_HEIGHT / 3.5,
+                    child: Container(
+                      width: 12,
+                      // height: 15,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(99),
+                        ),
+                        border: Border.all(
+                          color: SettingsController.of(context)
+                              .currentTheme
+                              .primaryColor
+                              .withOpacity(0.9),
+                          width: 3,
+                        ),
+                      ),
+                    ),
                   ),
-                  border: Border.all(
-                    color: AppTheme.of(context)
-                        .currentTheme
-                        .primaryColor
-                        .withOpacity(0.9),
-                    width: 3,
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),

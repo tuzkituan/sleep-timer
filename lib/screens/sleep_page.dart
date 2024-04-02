@@ -3,10 +3,7 @@ import 'dart:async';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:provider/provider.dart';
 import 'package:sleep_timer/screens/default_theme/default_theme.dart';
-import 'package:sleep_timer/screens/earth_theme/earth_theme.dart';
-import 'package:sleep_timer/themes.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
 
 class SleepPage extends StatefulWidget {
@@ -27,7 +24,7 @@ class _SleepPageState extends State<SleepPage> {
   @override
   void initState() {
     super.initState();
-    timerValue = AppVariables.INIT_TIME;
+    timerValue = AppVariables.INIT_TIME * 60;
   }
 
   void _updateLabels(int init, int end, int l) {
@@ -37,25 +34,25 @@ class _SleepPageState extends State<SleepPage> {
   }
 
   Future<void> _showNotificationWithActions({int minutes = 0}) async {
-    AndroidNotificationDetails androidNotificationDetails =
-        const AndroidNotificationDetails(
-      "sleep_timer_id",
-      'SleepTimer',
-      channelDescription: 'your channel description',
-      // importance: Importance.high,
-      // priority: Priority.high,
-      playSound: false,
-      ticker: 'ticker',
-      ongoing: true,
-      actions: <AndroidNotificationAction>[
-        AndroidNotificationAction('id_1', 'Stop'),
-        AndroidNotificationAction('id_2', 'Extend'),
-      ],
-    );
-    NotificationDetails notificationDetails =
-        NotificationDetails(android: androidNotificationDetails);
-    await flutterLocalNotificationsPlugin.show(0, "You're set",
-        '${minutes.toString()} minutes remaining', notificationDetails);
+    // AndroidNotificationDetails androidNotificationDetails =
+    //     const AndroidNotificationDetails(
+    //   "sleep_timer_id",
+    //   'SleepTimer',
+    //   channelDescription: 'your channel description',
+    //   // importance: Importance.high,
+    //   // priority: Priority.high,
+    //   playSound: false,
+    //   ticker: 'ticker',
+    //   ongoing: true,
+    //   actions: <AndroidNotificationAction>[
+    //     AndroidNotificationAction('id_1', 'Stop'),
+    //     AndroidNotificationAction('id_2', 'Extend'),
+    //   ],
+    // );
+    // NotificationDetails notificationDetails =
+    //     NotificationDetails(android: androidNotificationDetails);
+    // await flutterLocalNotificationsPlugin.show(0, "You're set",
+    //     '${minutes.toString()} minutes remaining', notificationDetails);
   }
 
   void startTimer() async {
@@ -82,7 +79,7 @@ class _SleepPageState extends State<SleepPage> {
           setState(() {
             timer.cancel();
             currentNotificationId = 0;
-            timerValue = AppVariables.INIT_TIME;
+            timerValue = AppVariables.INIT_TIME * 60;
             isStart = false;
           });
         } else {
@@ -130,31 +127,20 @@ class _SleepPageState extends State<SleepPage> {
   @override
   Widget build(BuildContext context) {
     var finalTime = formattedTime(timeInSecond: timerValue);
-    AppThemeKeys currentTheme = Provider.of<AppTheme>(context).currentThemeKey;
 
-    if (currentTheme == AppThemeKeys.theme0) {
-      return DefaultTheme(
-          isStart: isStart,
-          timerValue: timerValue,
-          startTimer: startTimer,
-          stopTimer: stopTimer,
-          finalTime: finalTime,
-          onSliderChange: (int value) {
-            setState(() {
-              timerValue = value;
-            });
-          });
-    }
-    return EarthTheme(
-        isStart: isStart,
-        timerValue: timerValue,
-        startTimer: startTimer,
-        stopTimer: stopTimer,
-        finalTime: finalTime,
-        onSliderChange: (int value) {
-          setState(() {
+    return DefaultTheme(
+      isStart: isStart,
+      timerValue: timerValue,
+      startTimer: startTimer,
+      stopTimer: stopTimer,
+      finalTime: finalTime,
+      onSliderChange: (int value) {
+        setState(
+          () {
             timerValue = value;
-          });
-        });
+          },
+        );
+      },
+    );
   }
 }

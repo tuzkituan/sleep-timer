@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sleep_timer/controllers/settings_controller.dart';
 
 class ActionButton extends StatelessWidget {
   final String title;
@@ -10,6 +11,8 @@ class ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData currentTheme = SettingsController.of(context).currentTheme;
+
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
@@ -26,9 +29,9 @@ class ActionButton extends StatelessWidget {
         children: [
           const SizedBox(width: 4),
           Text(
-            title,
+            title.toUpperCase(),
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           )

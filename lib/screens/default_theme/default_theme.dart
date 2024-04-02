@@ -3,7 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sleep_timer/components/action_button/action_button.dart';
 import 'package:sleep_timer/components/main_timer_text/main_timer_text.dart';
 import 'package:sleep_timer/components/time_slider/time_slider.dart';
-import 'package:sleep_timer/themes.dart';
+import 'package:sleep_timer/controllers/settings_controller.dart';
+import 'package:sleep_timer/utils/themes.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
 
 class DefaultTheme extends StatelessWidget {
@@ -25,7 +26,10 @@ class DefaultTheme extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String character = ThemeCharacter[AppThemeKeys.theme0]!;
+    SettingsController settingsController = SettingsController.of(context);
+    AppThemeKeys currentTheme = settingsController.currentThemeKey;
+
+    String character = ThemeCharacter[currentTheme]!;
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -40,7 +44,7 @@ class DefaultTheme extends StatelessWidget {
         children: [
           Expanded(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -68,18 +72,11 @@ class DefaultTheme extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.1,
+          TimeSlider(
+            isStart: isStart,
+            timerValue: timerValue,
+            onChange: onSliderChange,
           ),
-          isStart
-              ? Container(
-                  height: AppVariables.SLIDER_HEIGHT,
-                )
-              : TimeSlider(
-                  isStart: isStart,
-                  timerValue: timerValue,
-                  onChange: onSliderChange,
-                ),
           const SizedBox(height: 24),
           ActionButton(
             title: (isStart ? "stop" : "start").toUpperCase(),
