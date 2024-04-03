@@ -140,6 +140,9 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
                 },
               ),
             ),
+            const SizedBox(
+              height: 24,
+            ),
             ...renderGroup(
               title: "max time",
               subtitle: "${settingsController.maxTime} minutes",
@@ -167,9 +170,6 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
               ),
             ),
             // ...renderGroup(title: "about me", subtitle: "Lewis Nguyen"),
-            const SizedBox(
-              height: 24,
-            ),
             ...renderGroup(
               title: "extend time",
               subtitle: "5 minutes",
