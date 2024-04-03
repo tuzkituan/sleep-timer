@@ -26,8 +26,8 @@ class TimeSlider extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         color: SettingsController.of(context)
             .currentTheme
-            .cardColor
-            .withOpacity(0.3),
+            .splashColor
+            .withOpacity(0.1),
       ),
       height: AppVariables.SLIDER_HEIGHT,
       child: GestureDetector(
@@ -59,7 +59,7 @@ class TimeSlider extends StatelessWidget {
               child: Container(
                 color: SettingsController.of(context)
                     .currentTheme
-                    .cardColor
+                    .splashColor
                     .withOpacity(0.4),
                 width: (timerValue / (maxTime * 60)) * sliderWidth,
                 height: AppVariables.SLIDER_HEIGHT,
