@@ -69,7 +69,7 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
                   size: 20,
                 ),
                 SizedBox(
-                  width: 8,
+                  width: 12,
                 ),
                 Text(
                   'SETTINGS',
@@ -90,8 +90,8 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
                 itemCount: themeKeys.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 4,
+                  crossAxisSpacing: 4,
                 ),
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -215,7 +215,7 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
       Text(
         title,
         style: const TextStyle(
-          fontSize: 14,
+          fontSize: 16,
           fontWeight: FontWeight.normal,
         ),
       ),
@@ -226,7 +226,7 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
         Text(
           subtitle,
           style: const TextStyle(
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: FontWeight.normal,
             color: Colors.grey,
           ),
