@@ -94,6 +94,7 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
                   crossAxisSpacing: 8,
                 ),
                 shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (BuildContext context, int index) {
                   ThemeData? theme = ThemeList[themeKeys[index]] ??
                       ThemeList[AppThemeKeys.theme0];
@@ -166,6 +167,9 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
               ),
             ),
             // ...renderGroup(title: "about me", subtitle: "Lewis Nguyen"),
+            const SizedBox(
+              height: 24,
+            ),
             ...renderGroup(
               title: "extend time",
               subtitle: "5 minutes",
