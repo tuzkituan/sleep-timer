@@ -18,7 +18,7 @@ class TimeSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double sliderWidth = screenWidth - AppVariables.MAIN_PADDING * 2;
-    int maxTime = SettingsController.of(context).maxTime;
+    int maxTime = AppVariables.MAX_TIME;
 
     return Container(
       clipBehavior: Clip.hardEdge,

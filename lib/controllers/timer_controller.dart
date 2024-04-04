@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
 
 class TimerController extends ChangeNotifier {
-  late Timer _timer;
+  Timer? _timer;
   bool isStart = false;
   late int timerValue = AppVariables.INIT_TIME * 60;
   bool needReset = false;
@@ -54,8 +54,8 @@ class TimerController extends ChangeNotifier {
   }
 
   void stopTimer() {
-    if (_timer.isActive) {
-      _timer.cancel();
+    if (_timer != null) {
+      _timer?.cancel();
     }
     isStart = false;
     // AwesomeNotifications().dismissAllNotifications();
@@ -102,8 +102,8 @@ class TimerController extends ChangeNotifier {
 
   void resetTimer() {
     AwesomeNotifications().dismissAllNotifications();
-    if (_timer.isActive) {
-      _timer.cancel();
+    if (_timer != null) {
+      _timer?.cancel();
     }
     isStart = false;
     timerValue = AppVariables.INIT_TIME * 60;

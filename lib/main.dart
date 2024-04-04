@@ -125,13 +125,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    TimerController timerController = Provider.of<TimerController>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const AppTitle(),
         centerTitle: true,
-        elevation: 0,
+        elevation: 1,
         backgroundColor: Colors.transparent,
         toolbarHeight: 60,
         actions: [
@@ -143,12 +141,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   return SettingsBottomSheet();
                 },
                 isScrollControlled: true,
-              ).whenComplete(() {
-                timerController.resetTimer();
-              });
+              );
+              // .whenComplete(() {
+              //   timerController.resetTimer();
+              // });
             },
             icon: const Icon(
-              Icons.settings_outlined,
+              Icons.settings,
               size: 20,
             ),
           ),

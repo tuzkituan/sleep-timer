@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:sleep_timer/components/action_button/action_button.dart';
 import 'package:sleep_timer/controllers/settings_controller.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
 import 'package:sleep_timer/utils/themes.dart';
@@ -16,32 +15,26 @@ class SettingsBottomSheet extends StatefulWidget {
 class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
   List<AppThemeKeys> themeKeys = AppThemeKeys.values.toList();
 
-  void onMaxTimeChanged(int value) {
-    SettingsController settingsController = SettingsController.of(context);
-    if (value.round() >= AppVariables.INIT_TIME) {
-      settingsController.maxTime = value.round();
-    }
+  void onClose() {
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    SettingsController settingsController = SettingsController.of(context);
-
     return SafeArea(
+      bottom: false,
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.only(
-          top: AppVariables.MAIN_PADDING / 2,
-          left: AppVariables.MAIN_PADDING,
-          right: AppVariables.MAIN_PADDING,
-          bottom: AppVariables.MAIN_PADDING * 1.5,
+          top: AppVariables.MAIN_PADDING / 4,
+          bottom: AppVariables.MAIN_PADDING / 4,
         ),
         decoration: BoxDecoration(
           color:
               SettingsController.of(context).currentTheme.dialogBackgroundColor,
           borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(12),
-            topRight: Radius.circular(12),
+            topLeft: Radius.circular(0),
+            topRight: Radius.circular(0),
           ),
         ),
         child: Column(
@@ -49,160 +42,83 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Center(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                height: 4,
-                width: MediaQuery.of(context).size.width * 0.12,
-              ),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            const Row(
+            Row(
               children: [
-                Icon(
-                  Icons.settings_outlined,
-                  size: 20,
-                ),
-                SizedBox(
-                  width: 12,
-                ),
-                Text(
-                  'SETTINGS',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    letterSpacing: 2,
+                IconButton(
+                  onPressed: onClose,
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new,
+                    size: 16,
                   ),
                 ),
               ],
             ),
-            const SizedBox(
-              height: 24,
-            ),
-            ...renderGroup(
-              title: "customize theme",
-              child: GridView.builder(
-                itemCount: themeKeys.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 4,
-                  crossAxisSpacing: 4,
-                ),
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (BuildContext context, int index) {
-                  ThemeData? theme = ThemeList[themeKeys[index]] ??
-                      ThemeList[AppThemeKeys.theme0];
-                  bool isActive = themeKeys[index] ==
-                      SettingsController.of(context).currentThemeKey;
-                  String character = ThemeCharacter[themeKeys[index]] ?? "";
+            Container(
+              padding: const EdgeInsets.only(
+                top: AppVariables.MAIN_PADDING,
+                left: AppVariables.MAIN_PADDING,
+                right: AppVariables.MAIN_PADDING,
+                bottom: AppVariables.MAIN_PADDING,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ...renderGroup(
+                    title: "customize theme",
+                    child: GridView.builder(
+                      itemCount: themeKeys.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        mainAxisSpacing: 8,
+                        crossAxisSpacing: 8,
+                      ),
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (BuildContext context, int index) {
+                        ThemeData? theme = ThemeList[themeKeys[index]] ??
+                            ThemeList[AppThemeKeys.theme0];
+                        bool isActive = themeKeys[index] ==
+                            SettingsController.of(context).currentThemeKey;
+                        String character =
+                            ThemeCharacter[themeKeys[index]] ?? "";
 
-                  return GestureDetector(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(14),
-                        border: isActive
-                            ? Border.all(
-                                color: Colors.white,
-                                width: 2,
-                              )
-                            : Border.all(
-                                color: Colors.transparent,
-                                width: 2,
-                              ),
-                      ),
-                      padding: const EdgeInsets.all(4),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: theme!.primaryColor,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.all(12),
-                        child: SvgPicture.asset(
-                          character,
-                          width: double.infinity,
-                        ),
-                      ),
+                        return GestureDetector(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: theme!.primaryColor,
+                              borderRadius: BorderRadius.circular(8),
+                              border: isActive
+                                  ? Border.all(
+                                      color: Colors.white,
+                                      width: 2,
+                                    )
+                                  : Border.all(
+                                      color: Colors.transparent,
+                                      width: 2,
+                                    ),
+                            ),
+                            padding: const EdgeInsets.all(12),
+                            child: SvgPicture.asset(
+                              character,
+                              width: double.infinity,
+                            ),
+                          ),
+                          onTap: () => {
+                            Provider.of<SettingsController>(context,
+                                    listen: false)
+                                .setTheme(
+                              themeKeys[index],
+                            ),
+                          },
+                        );
+                      },
                     ),
-                    onTap: () => {
-                      Provider.of<SettingsController>(context, listen: false)
-                          .setTheme(
-                        themeKeys[index],
-                      ),
-                    },
-                  );
-                },
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-            ...renderGroup(
-              title: "max time",
-              subtitle: "${settingsController.maxTime} minutes",
-              child: SliderTheme(
-                data: SliderThemeData(
-                  trackShape: CustomTrackShape(),
-                  trackHeight: 1,
-                ),
-                child: Slider(
-                  value: settingsController.maxTime.toDouble(),
-                  max: 120,
-                  min: AppVariables.INIT_TIME.toDouble(),
-                  inactiveColor:
-                      SettingsController.of(context).currentTheme.disabledColor,
-                  activeColor: SettingsController.of(context)
-                      .currentTheme
-                      .indicatorColor,
-                  thumbColor: SettingsController.of(context)
-                      .currentTheme
-                      .indicatorColor,
-                  onChanged: (double value) {
-                    onMaxTimeChanged(value.round());
-                  },
-                ),
-              ),
-            ),
-            // ...renderGroup(title: "about me", subtitle: "Lewis Nguyen"),
-            ...renderGroup(
-              title: "extend time",
-              subtitle: "5 minutes",
-              child: SliderTheme(
-                data: SliderThemeData(
-                  trackShape: CustomTrackShape(),
-                  trackHeight: 1,
-                ),
-                child: Slider(
-                  value: 5,
-                  max: 60,
-                  min: 5,
-                  inactiveColor:
-                      SettingsController.of(context).currentTheme.disabledColor,
-                  activeColor: SettingsController.of(context)
-                      .currentTheme
-                      .indicatorColor,
-                  thumbColor: SettingsController.of(context)
-                      .currentTheme
-                      .indicatorColor,
-                  onChanged: (double value) {},
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            ActionButton(
-              title: "Done",
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
+            )
           ],
         ),
       ),
@@ -213,15 +129,16 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
       {required String title, String? subtitle, Widget? child}) {
     return [
       Text(
-        title,
-        style: const TextStyle(
-          fontSize: 16,
+        title.toUpperCase(),
+        style: TextStyle(
+          fontSize: 12,
           fontWeight: FontWeight.normal,
+          color: Colors.grey[400]!,
         ),
       ),
       if (subtitle != null) ...[
         const SizedBox(
-          height: 4,
+          height: 12,
         ),
         Text(
           subtitle,
@@ -232,10 +149,12 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
           ),
         ),
       ],
-      const SizedBox(
-        height: 12,
-      ),
-      child ?? Container(),
+      if (child != null) ...[
+        const SizedBox(
+          height: 16,
+        ),
+        child,
+      ]
     ];
   }
 }

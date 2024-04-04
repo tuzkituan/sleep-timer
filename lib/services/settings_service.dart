@@ -1,6 +1,5 @@
-import 'package:sleep_timer/utils/themes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sleep_timer/utils/app_variables.dart';
+import 'package:sleep_timer/utils/themes.dart';
 
 class SettingsService {
   /// Loads the User's preferred ThemeMode from local or remote storage.
@@ -21,16 +20,5 @@ class SettingsService {
     // http package to persist settings over the network.
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('themeKey', themeKey.toString());
-  }
-
-  Future<int> loadMaxTime() async {
-    final prefs = await SharedPreferences.getInstance();
-    final maxTime = prefs.getInt('maxTime');
-    return maxTime ?? AppVariables.MAX_TIME;
-  }
-
-  Future<void> updateMaxTime(int maxTime) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setInt('maxTime', maxTime);
   }
 }

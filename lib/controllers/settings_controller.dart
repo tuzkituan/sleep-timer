@@ -8,11 +8,9 @@ class SettingsController extends ChangeNotifier {
   final SettingsService _settingsService;
 
   late AppThemeKeys _themeKey;
-  late int _maxTime;
 
   Future<void> loadSettings() async {
     _themeKey = await _settingsService.loadThemeKey();
-    _maxTime = await _settingsService.loadMaxTime();
     notifyListeners();
   }
 
@@ -21,14 +19,6 @@ class SettingsController extends ChangeNotifier {
 
   ThemeData get currentTheme => ThemeList[_themeKey] ?? ThemeData();
   AppThemeKeys get currentThemeKey => _themeKey;
-
-  int get maxTime => _maxTime;
-
-  set maxTime(int maxTime) {
-    _maxTime = maxTime;
-    notifyListeners();
-    _settingsService.updateMaxTime(maxTime);
-  }
 
   Future<void> setTheme(AppThemeKeys? themeKey) async {
     if (themeKey == null) return;
