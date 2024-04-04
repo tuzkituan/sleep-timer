@@ -22,8 +22,9 @@ void main() async {
     statusBarIconBrightness: Brightness.light,
   ));
 
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
-      overlays: [SystemUiOverlay.top]);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: [
+    SystemUiOverlay.top,
+  ]);
 
   final settingsController = SettingsController(SettingsService());
 
@@ -41,6 +42,8 @@ void main() async {
         channelDescription: 'Notification channel for basic tests',
         enableVibration: false,
         playSound: false,
+        locked: true,
+        enableLights: false,
       )
     ],
   );
@@ -131,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
         centerTitle: true,
         elevation: 1,
         backgroundColor: Colors.transparent,
-        toolbarHeight: 60,
+        toolbarHeight: 50,
         actions: [
           IconButton(
             onPressed: () {
@@ -148,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             icon: const Icon(
               Icons.settings,
-              size: 20,
+              size: 18,
             ),
           ),
         ],

@@ -23,7 +23,7 @@ class TimeSlider extends StatelessWidget {
     return Container(
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(AppVariables.MAIN_BORDER_RADIUS),
         color: SettingsController.of(context)
             .currentTheme
             .splashColor

@@ -4,7 +4,8 @@ class AppVariables {
 
   static const double MAIN_PADDING = 24;
   static const double SLIDER_HEIGHT = 70;
+  static const double MAIN_BORDER_RADIUS = 4;
 
-  static const int MAX_TIME = 60;
-  static const int INIT_TIME = 15;
+  static const int MAX_TIME = 120;
+  static const int INIT_TIME = 30;
 }

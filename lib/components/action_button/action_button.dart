@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sleep_timer/controllers/settings_controller.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:sleep_timer/utils/app_variables.dart';
 
 class ActionButton extends StatelessWidget {
   final String title;
@@ -18,18 +19,21 @@ class ActionButton extends StatelessWidget {
               isDanger ? Colors.red[900]!.withOpacity(0.7) : Colors.transparent,
           minimumSize: const Size.fromHeight(50),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: const BorderSide(color: Colors.white24),
+            borderRadius: BorderRadius.circular(
+              AppVariables.MAIN_BORDER_RADIUS,
+            ),
+            side: const BorderSide(
+              color: Colors.white24,
+            ),
           )),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(width: 4),
           Text(
             title.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 15,
+            style: GoogleFonts.kodeMono(
+              fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           )

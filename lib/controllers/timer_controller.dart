@@ -43,7 +43,6 @@ class TimerController extends ChangeNotifier {
         } else {
           // int min = (timerValue / 60).floor();
           timerValue--;
-          // TODO
           // showNotification(
           //   minutes: min,
           // );
@@ -58,7 +57,7 @@ class TimerController extends ChangeNotifier {
       _timer?.cancel();
     }
     isStart = false;
-    // AwesomeNotifications().dismissAllNotifications();
+    AwesomeNotifications().dismissAllNotifications();
     notifyListeners();
   }
 
@@ -80,18 +79,8 @@ class TimerController extends ChangeNotifier {
         channelKey: 'sleep_timer_channel',
         title: "You're set",
         body: '${minutes.toString()} minutes remaining',
+        locked: true,
       ),
-      actionButtons: [
-        NotificationActionButton(
-          key: "stop",
-          label: "Stop",
-        ),
-        NotificationActionButton(
-          key: "extend",
-          label: "Extend",
-          autoDismissible: false,
-        ),
-      ],
     );
   }
 

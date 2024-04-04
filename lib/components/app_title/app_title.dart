@@ -8,7 +8,11 @@ class AppTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       "SLEEP TIMER",
-      style: GoogleFonts.archivo(fontSize: 14, letterSpacing: 7),
+      style: GoogleFonts.archivo(
+        fontSize: 13,
+        letterSpacing: 7,
+        fontWeight: FontWeight.w500,
+      ),
     );
   }
 }

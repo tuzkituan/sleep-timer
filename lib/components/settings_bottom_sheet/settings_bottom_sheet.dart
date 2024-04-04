@@ -88,7 +88,9 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
                           child: Container(
                             decoration: BoxDecoration(
                               color: theme!.primaryColor,
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(
+                                AppVariables.MAIN_BORDER_RADIUS,
+                              ),
                               border: isActive
                                   ? Border.all(
                                       color: Colors.white,
