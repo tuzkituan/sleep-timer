@@ -34,7 +34,7 @@ class BackgroundController extends ChangeNotifier {
         onStart: onStart,
 
         // auto start service
-        autoStart: false,
+        autoStart: true,
         isForegroundMode: true,
 
         notificationChannelId:
@@ -73,10 +73,12 @@ class BackgroundController extends ChangeNotifier {
                   AndroidNotificationAction(
                     'stop',
                     'Stop',
+                    showsUserInterface: true,
                   ),
                   AndroidNotificationAction(
                     'extend',
                     'Extend',
+                    showsUserInterface: true,
                   ),
                 ],
               ),
@@ -89,8 +91,10 @@ class BackgroundController extends ChangeNotifier {
       }
     }
     service.on('stopService').listen((event) {
+      print("[FOREGROUND SERVICE] stopped start");
       service.invoke("stopTimer");
       service.stopSelf();
+      print("[FOREGROUND SERVICE] stopped end");
     });
   }
 }

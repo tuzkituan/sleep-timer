@@ -57,7 +57,6 @@ class TimerController extends ChangeNotifier {
   }
 
   void stopTimer() async {
-    print("_timer ${_timer}");
     if (_timer != null) {
       _timer?.cancel();
     }

@@ -41,7 +41,8 @@ dependencies:
   shimmer: ^3.0.0
   provider: ^6.1.2
   shared_preferences: ^2.2.2
-  flutter_background_service: ^5.0.5
+  flutter_background_service: any
+  flutter_background_service_android: "6.0.1"
   flutter_local_notifications: ^17.0.0
 
 dev_dependencies:
@@ -53,7 +54,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.2
   # circular: ^0.0.5
 
 # For information on the generic Dart part of this file, see the
