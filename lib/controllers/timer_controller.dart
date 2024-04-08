@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
 
 class TimerController extends ChangeNotifier {
@@ -21,11 +21,6 @@ class TimerController extends ChangeNotifier {
     await session.configure(const AudioSessionConfiguration.music());
     isStart = true;
     notifyListeners();
-
-    final isRunning = await FlutterBackgroundService().isRunning();
-    if (!isRunning) {
-      await FlutterBackgroundService().startService();
-    }
 
     const oneSec = Duration(seconds: 1);
     _timer = Timer.periodic(
@@ -61,7 +56,7 @@ class TimerController extends ChangeNotifier {
       _timer?.cancel();
     }
     isStart = false;
-    FlutterBackgroundService().invoke("stopService");
+    await FlutterLocalNotificationsPlugin().cancelAll();
     notifyListeners();
   }
 
@@ -77,7 +72,31 @@ class TimerController extends ChangeNotifier {
   }
 
   Future<void> showNotification({int minutes = 0}) async {
-    FlutterBackgroundService().invoke("startTimer", {"value": minutes});
+    FlutterLocalNotificationsPlugin().show(
+      3,
+      "You're set!",
+      '$minutes minutes left',
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          "sleep_timer_channel",
+          'SleepTimer',
+          ongoing: true,
+          playSound: false,
+          actions: [
+            AndroidNotificationAction(
+              'stop',
+              'Stop',
+              showsUserInterface: true,
+            ),
+            AndroidNotificationAction(
+              'extend',
+              'Extend',
+              showsUserInterface: true,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> extendTimer() async {

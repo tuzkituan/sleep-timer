@@ -2,13 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sleep_timer/components/app_title/app_title.dart';
 import 'package:sleep_timer/components/settings_bottom_sheet/settings_bottom_sheet.dart';
-import 'package:sleep_timer/controllers/background_controller.dart';
 import 'package:sleep_timer/controllers/settings_controller.dart';
 import 'package:sleep_timer/controllers/timer_controller.dart';
 import 'package:sleep_timer/screens/sleep_page.dart';
@@ -16,7 +14,6 @@ import 'package:sleep_timer/services/settings_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  BackgroundController.initializeService();
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarBrightness: Brightness.light,
@@ -94,17 +91,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.detached) {
-      print("STOP SERVICE");
-      try {
-        FlutterBackgroundService().invoke("stopService");
-      } catch (error) {
-        print("Error stopping service: $error");
-      }
-      print("STOP SERVIC 2");
-      // SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-      // exit(0);
+      exit(0);
     }
   }
 
