@@ -46,6 +46,7 @@ class BackgroundController extends ChangeNotifier {
     );
   }
 
+  @pragma('vm:entry-point')
   static Future<void> onStart(ServiceInstance service) async {
     DartPluginRegistrant.ensureInitialized();
     print("[FOREGROUND SERVICE] started");
