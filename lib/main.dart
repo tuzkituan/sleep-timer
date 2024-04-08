@@ -98,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
             AndroidFlutterLocalNotificationsPlugin>()
         ?.requestNotificationsPermission();
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings("@mipmap/ic_launcher");
+        AndroidInitializationSettings("ic_notification");
     const InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,

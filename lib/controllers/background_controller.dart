@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class BackgroundController extends ChangeNotifier {
   // this will be used as notification channel id
@@ -73,7 +72,6 @@ class BackgroundController extends ChangeNotifier {
           android: AndroidNotificationDetails(
             notificationChannelId,
             'SleepTimer',
-            icon: 'ic_bg_service_small',
             ongoing: true,
           ),
         ),
