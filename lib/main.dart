@@ -107,6 +107,9 @@ class _MyHomePageState extends State<MyHomePage> {
       if (res.actionId == "stop") {
         onNotificationStopClick();
       }
+      if (res.actionId == "extend") {
+        onNotificationExtendClick();
+      }
     });
   }
 
@@ -115,6 +118,14 @@ class _MyHomePageState extends State<MyHomePage> {
       TimerController timerController =
           Provider.of<TimerController>(context, listen: false);
       timerController.stopTimer();
+    });
+  }
+
+  void onNotificationExtendClick() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      TimerController timerController =
+          Provider.of<TimerController>(context, listen: false);
+      timerController.extendTimer();
     });
   }
 

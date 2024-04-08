@@ -34,7 +34,7 @@ class BackgroundController extends ChangeNotifier {
         onStart: onStart,
 
         // auto start service
-        autoStart: true,
+        autoStart: false,
         isForegroundMode: true,
 
         notificationChannelId:
@@ -73,7 +73,10 @@ class BackgroundController extends ChangeNotifier {
                   AndroidNotificationAction(
                     'stop',
                     'Stop',
-                    showsUserInterface: true,
+                  ),
+                  AndroidNotificationAction(
+                    'extend',
+                    'Extend',
                   ),
                 ],
               ),

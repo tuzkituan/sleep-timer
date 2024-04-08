@@ -82,7 +82,11 @@ class TimerController extends ChangeNotifier {
   }
 
   Future<void> extendTimer() async {
-    timerValue += 5 * 60;
+    var newValue = timerValue + 5 * 60;
+    if (newValue > AppVariables.MAX_TIME * 60) {
+      newValue = AppVariables.MAX_TIME * 60;
+    }
+    timerValue = newValue;
     notifyListeners();
   }
 }
