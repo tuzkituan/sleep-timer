@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:audio_session/audio_session.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
 
 class TimerController extends ChangeNotifier {
@@ -38,14 +38,13 @@ class TimerController extends ChangeNotifier {
           timer.cancel();
           timerValue = AppVariables.INIT_TIME * 60;
           isStart = false;
-          AwesomeNotifications().dismissAllNotifications();
           notifyListeners();
         } else {
-          // int min = (timerValue / 60).floor();
+          int min = (timerValue / 60).floor();
           timerValue--;
-          // showNotification(
-          //   minutes: min,
-          // );
+          showNotification(
+            minutes: min,
+          );
           notifyListeners();
         }
       },
@@ -57,7 +56,8 @@ class TimerController extends ChangeNotifier {
       _timer?.cancel();
     }
     isStart = false;
-    AwesomeNotifications().dismissAllNotifications();
+    FlutterBackgroundService().invoke("stopTimer");
+
     notifyListeners();
   }
 
@@ -73,15 +73,7 @@ class TimerController extends ChangeNotifier {
   }
 
   Future<void> showNotification({int minutes = 0}) async {
-    AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: 1,
-        channelKey: 'sleep_timer_channel',
-        title: "You're set",
-        body: '${minutes.toString()} minutes remaining',
-        locked: true,
-      ),
-    );
+    FlutterBackgroundService().invoke("startTimer", {"value": minutes});
   }
 
   Future<void> extendTimer() async {
@@ -90,12 +82,12 @@ class TimerController extends ChangeNotifier {
   }
 
   void resetTimer() {
-    AwesomeNotifications().dismissAllNotifications();
     if (_timer != null) {
       _timer?.cancel();
     }
     isStart = false;
     timerValue = AppVariables.INIT_TIME * 60;
+    FlutterBackgroundService().invoke("stopTimer");
     notifyListeners();
   }
 }

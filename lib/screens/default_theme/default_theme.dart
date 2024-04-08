@@ -58,7 +58,7 @@ class DefaultTheme extends StatelessWidget {
                   "stop playing in",
                   style: TextStyle(
                     // color: Colors.white,
-                    fontSize: 20,
+                    fontSize: 18,
                   ),
                 ),
                 const SizedBox(

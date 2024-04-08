@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 
+double numberFontSize = 64;
+
 class MainTimerText extends StatelessWidget {
   final String minute;
   final String second;
@@ -27,7 +29,7 @@ class MainTimerText extends StatelessWidget {
           Text(
             minute,
             style: GoogleFonts.kodeMono(
-              fontSize: 60,
+              fontSize: numberFontSize,
               height: 0,
               fontWeight: FontWeight.w700,
               color: Colors.white,
@@ -51,7 +53,7 @@ class MainTimerText extends StatelessWidget {
           Text(
             second,
             style: GoogleFonts.kodeMono(
-              fontSize: 60,
+              fontSize: numberFontSize,
               height: 0,
               fontWeight: FontWeight.w700,
               color: Colors.white,
