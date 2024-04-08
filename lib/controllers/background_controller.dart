@@ -34,7 +34,7 @@ class BackgroundController extends ChangeNotifier {
         onStart: onStart,
 
         // auto start service
-        autoStart: false,
+        autoStart: true,
         isForegroundMode: true,
 
         notificationChannelId:
