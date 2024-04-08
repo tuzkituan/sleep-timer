@@ -86,11 +86,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    requestNotification();
+    initNotification();
   }
 
-  Future<void> requestNotification() async {
-    print("[NOTIFICATION] started");
+  Future<void> initNotification() async {
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
         FlutterLocalNotificationsPlugin();
     flutterLocalNotificationsPlugin
@@ -105,7 +104,17 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse: (NotificationResponse res) {
-      print("notification: " + res.toString());
+      if (res.actionId == "stop") {
+        onNotificationStopClick();
+      }
+    });
+  }
+
+  void onNotificationStopClick() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      TimerController timerController =
+          Provider.of<TimerController>(context, listen: false);
+      timerController.stopTimer();
     });
   }
 
@@ -128,9 +137,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 isScrollControlled: true,
               );
-              // .whenComplete(() {
-              //   timerController.resetTimer();
-              // });
             },
             icon: const Icon(
               Icons.settings,

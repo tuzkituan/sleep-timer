@@ -7,15 +7,14 @@ import 'package:flutter_background_service_android/flutter_background_service_an
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class BackgroundController extends ChangeNotifier {
-  // this will be used as notification channel id
-  static const notificationChannelId = 'my_foreground';
+  static FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
-// this will be used for notification id, So you can update your custom notification with this id.
-  static const notificationId = 888;
+  static const notificationChannelId = 'my_foreground';
+  static const notificationId = 3;
 
   static Future<void> initializeService() async {
     final service = FlutterBackgroundService();
-
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       notificationChannelId, // id
       'SleepTimer', // title
@@ -23,9 +22,6 @@ class BackgroundController extends ChangeNotifier {
           'This channel is used for important notifications.', // description
       importance: Importance.low, // importance must be at low or higher level
     );
-
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
 
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -38,12 +34,13 @@ class BackgroundController extends ChangeNotifier {
         onStart: onStart,
 
         // auto start service
-        autoStart: true,
+        autoStart: false,
         isForegroundMode: true,
 
         notificationChannelId:
             notificationChannelId, // this must match with notification channel you created above.
         foregroundServiceNotificationId: notificationId,
+        autoStartOnBoot: false,
       ),
       iosConfiguration: IosConfiguration(),
     );
@@ -54,36 +51,41 @@ class BackgroundController extends ChangeNotifier {
     print("[FOREGROUND SERVICE] started");
     if (service is AndroidServiceInstance) {
       service.on('setAsForeground').listen((event) {
-        // print("[FOREGROUND SERVICE] setAsForeground");
         service.setAsForegroundService();
       });
       service.on('setAsBackground').listen((event) {
-        // print("[FOREGROUND SERVICE] setAsBackground");
         service.setAsBackgroundService();
       });
+      if (await service.isForegroundService()) {
+        service.on("startTimer").listen((event) async {
+          flutterLocalNotificationsPlugin.show(
+            notificationId,
+            "You're set!",
+            '${event!["value"]} minutes left',
+            const NotificationDetails(
+              android: AndroidNotificationDetails(
+                notificationChannelId,
+                'SleepTimer',
+                ongoing: true,
+                playSound: false,
+                actions: [
+                  AndroidNotificationAction(
+                    'stop',
+                    'Stop',
+                    showsUserInterface: true,
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+        service.on('stopTimer').listen((event) async {
+          await flutterLocalNotificationsPlugin.cancelAll();
+        });
+      }
     }
-    service.on("startTimer").listen((event) {
-      // print("[FOREGROUND SERVICE] startTimer " + event.toString());
-      FlutterLocalNotificationsPlugin().show(
-        notificationId,
-        "You're set!",
-        '${event!["value"]} minutes left',
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            notificationChannelId,
-            'SleepTimer',
-            ongoing: true,
-          ),
-        ),
-      );
-    });
-
-    service.on('stopTimer').listen((event) {
-      // print("[FOREGROUND SERVICE] stopTimer");
-      FlutterLocalNotificationsPlugin().cancelAll();
-    });
     service.on('stopService').listen((event) {
-      // print("[FOREGROUND SERVICE] stopService");
+      service.invoke("stopTimer");
       service.stopSelf();
     });
   }

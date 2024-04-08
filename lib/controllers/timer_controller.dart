@@ -22,6 +22,11 @@ class TimerController extends ChangeNotifier {
     isStart = true;
     notifyListeners();
 
+    final isRunning = await FlutterBackgroundService().isRunning();
+    if (!isRunning) {
+      await FlutterBackgroundService().startService();
+    }
+
     const oneSec = Duration(seconds: 1);
     _timer = Timer.periodic(
       oneSec,
@@ -51,13 +56,13 @@ class TimerController extends ChangeNotifier {
     );
   }
 
-  void stopTimer() {
+  void stopTimer() async {
+    print("_timer ${_timer}");
     if (_timer != null) {
       _timer?.cancel();
     }
     isStart = false;
-    FlutterBackgroundService().invoke("stopTimer");
-
+    FlutterBackgroundService().invoke("stopService");
     notifyListeners();
   }
 
@@ -78,16 +83,6 @@ class TimerController extends ChangeNotifier {
 
   Future<void> extendTimer() async {
     timerValue += 5 * 60;
-    notifyListeners();
-  }
-
-  void resetTimer() {
-    if (_timer != null) {
-      _timer?.cancel();
-    }
-    isStart = false;
-    timerValue = AppVariables.INIT_TIME * 60;
-    FlutterBackgroundService().invoke("stopTimer");
     notifyListeners();
   }
 }
