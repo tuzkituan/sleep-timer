@@ -11,7 +11,8 @@ class SleepPage extends StatefulWidget {
 class _SleepPageState extends State<SleepPage> {
   @override
   Widget build(BuildContext context) {
-    TimerController timerController = Provider.of<TimerController>(context);
+    TimerController timerController =
+        Provider.of<TimerController>(context, listen: true);
     var finalTime = timerController.getTime();
 
     return DefaultTheme(

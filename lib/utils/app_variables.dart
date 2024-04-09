@@ -10,6 +10,7 @@ class AppVariables {
 
   static const int MAX_TIME = 120;
   static const int INIT_TIME = 30;
+  static const int EXTEND_TIME = 5;
 
   static final navigatorKey = GlobalKey<NavigatorState>();
 }

@@ -1,49 +1,71 @@
 import 'dart:async';
+import 'dart:isolate';
 
-import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+import 'package:sleep_timer/task_handlers/my_task_handler.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
 
+@pragma('vm:entry-point')
+void startCallback() {
+  // The setTaskHandler function must be called to handle the task in the background.
+  FlutterForegroundTask.setTaskHandler(MyTaskHandler());
+}
+
 class TimerController extends ChangeNotifier {
-  // this will be used as notification channel id
   static const notificationChannelId = 'my_foreground';
+  static const notificationId = 145;
 
-  // this will be used for notification id, So you can update your custom notification with this id.
-  static const notificationId = 3;
+  ReceivePort? _receivePort;
 
-  Timer? _timer;
   bool isStart = false;
-  late int timerValue = AppVariables.INIT_TIME * 60;
-  bool needReset = false;
-  int currentMinute = -1;
+  int timerValue = AppVariables.INIT_TIME * 60;
 
-// flutterLocalNotificationsPlugin.show(
-//             notificationId,
-//             "You're set!",
-//             '${event?['value']} minutes left',
-//             const NotificationDetails(
-//               android: AndroidNotificationDetails(
-//                 "sleep_timer_channel",
-//                 'Sleep Timer',
-//                 ongoing: true,
-//                 playSound: false,
-//                 priority: Priority.low,
-//                 actions: [
-//                   AndroidNotificationAction(
-//                     'stop',
-//                     'Stop',
-//                     showsUserInterface: true,
-//                   ),
-//                   AndroidNotificationAction(
-//                     'extend',
-//                     'Extend',
-//                     showsUserInterface: true,
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           );
+  void initForegroundTask() async {
+    FlutterForegroundTask.init(
+      androidNotificationOptions: AndroidNotificationOptions(
+        id: notificationId,
+        channelId: notificationChannelId,
+        channelName: 'Sleep Timer Foreground Service',
+        channelDescription:
+            'This notification appears when the foreground service is running.',
+        channelImportance: NotificationChannelImportance.LOW,
+        priority: NotificationPriority.LOW,
+        isSticky: true,
+        iconData: const NotificationIconData(
+          resType: ResourceType.drawable,
+          resPrefix: ResourcePrefix.ic,
+          name: 'bg_service_small',
+        ),
+        buttons: [
+          const NotificationButton(
+            id: 'stop',
+            text: 'Stop',
+          ),
+          const NotificationButton(
+            id: 'extend',
+            text: 'Extend',
+          ),
+        ],
+      ),
+      iosNotificationOptions: const IOSNotificationOptions(
+        showNotification: true,
+        playSound: false,
+      ),
+      foregroundTaskOptions: const ForegroundTaskOptions(
+        interval: 1000,
+        isOnceEvent: false,
+        autoRunOnBoot: true,
+        allowWakeLock: true,
+        allowWifiLock: true,
+      ),
+    );
+
+    if (await FlutterForegroundTask.isRunningService) {
+      final newReceivePort = FlutterForegroundTask.receivePort;
+      _registerReceivePort(newReceivePort);
+    }
+  }
 
   void setTimerValue(int value) {
     timerValue = value;
@@ -51,50 +73,14 @@ class TimerController extends ChangeNotifier {
   }
 
   Future<void> startTimer() async {
-    final session = await AudioSession.instance;
-    await session.configure(const AudioSessionConfiguration.music());
     isStart = true;
     notifyListeners();
-
-    const oneSec = Duration(seconds: 1);
-    _timer = Timer.periodic(
-      oneSec,
-      (Timer timer) async {
-        if (timerValue == 0) {
-          if (await session.setActive(true,
-              avAudioSessionSetActiveOptions:
-                  const AVAudioSessionSetActiveOptions(1),
-              androidAudioFocusGainType: AndroidAudioFocusGainType.gain)) {
-            print("end");
-            await session.setActive(false);
-          }
-          timer.cancel();
-          timerValue = AppVariables.INIT_TIME * 60;
-          currentMinute = -1;
-          isStart = false;
-
-          notifyListeners();
-        } else {
-          int min = (timerValue / 60).floor();
-          timerValue--;
-          if (min != currentMinute) {
-            currentMinute = min;
-            showNotification(
-              minutes: min,
-            );
-          }
-          notifyListeners();
-        }
-      },
-    );
+    startForegroundTask();
   }
 
   void stopTimer() async {
-    if (_timer != null) {
-      _timer?.cancel();
-    }
-    currentMinute = -1;
     isStart = false;
+    FlutterForegroundTask.stopService();
     notifyListeners();
   }
 
@@ -109,25 +95,55 @@ class TimerController extends ChangeNotifier {
     };
   }
 
-  Future<void> showNotification({int minutes = 0}) async {
-    // FlutterBackgroundService().invoke("startTimer", {"value": minutes});
+  void closeReceivePort() {
+    _receivePort?.close();
+    _receivePort = null;
   }
 
-  Future<void> extendTimer() async {
-    var newValue = timerValue + 5 * 60;
-    if (newValue > AppVariables.MAX_TIME * 60) {
-      newValue = AppVariables.MAX_TIME * 60;
+  bool _registerReceivePort(ReceivePort? newReceivePort) {
+    if (newReceivePort == null) {
+      return false;
     }
-    timerValue = newValue;
-    Fluttertoast.showToast(
-      msg: "5 minutes extended",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.black,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
-    notifyListeners();
+
+    closeReceivePort();
+
+    _receivePort = newReceivePort;
+    _receivePort?.listen((data) {
+      if (data is int) {
+        timerValue = data;
+        if (!isStart) {
+          isStart = true;
+        }
+        notifyListeners();
+      } else if (data is String) {
+        if (data == 'stop') {
+          stopTimer();
+        }
+      }
+    });
+
+    return _receivePort != null;
+  }
+
+  Future<bool> startForegroundTask() async {
+    await FlutterForegroundTask.saveData(key: 'timerValue', value: timerValue);
+
+    // Register the receivePort before starting the service.
+    final ReceivePort? receivePort = FlutterForegroundTask.receivePort;
+    final bool isRegistered = _registerReceivePort(receivePort);
+    if (!isRegistered) {
+      print('Failed to register receivePort!');
+      return false;
+    }
+
+    if (await FlutterForegroundTask.isRunningService) {
+      return FlutterForegroundTask.restartService();
+    } else {
+      return FlutterForegroundTask.startService(
+        notificationTitle: '',
+        notificationText: '',
+        callback: startCallback,
+      );
+    }
   }
 }
