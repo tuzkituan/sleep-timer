@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
 
 class TimerController extends ChangeNotifier {
@@ -82,6 +83,7 @@ class TimerController extends ChangeNotifier {
           'SleepTimer',
           ongoing: true,
           playSound: false,
+          priority: Priority.low,
           actions: [
             AndroidNotificationAction(
               'stop',
@@ -105,6 +107,15 @@ class TimerController extends ChangeNotifier {
       newValue = AppVariables.MAX_TIME * 60;
     }
     timerValue = newValue;
+    Fluttertoast.showToast(
+      msg: "5 minutes extended",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
     notifyListeners();
   }
 }

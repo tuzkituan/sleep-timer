@@ -93,6 +93,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.detached) {
+      FlutterLocalNotificationsPlugin().cancelAll();
+      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
       exit(0);
     }
   }
@@ -165,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             },
             icon: const Icon(
               Icons.settings,
-              size: 18,
+              size: 20,
             ),
           ),
         ],

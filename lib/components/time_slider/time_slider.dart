@@ -60,7 +60,7 @@ class TimeSlider extends StatelessWidget {
                 color: SettingsController.of(context)
                     .currentTheme
                     .splashColor
-                    .withOpacity(0.4),
+                    .withOpacity(isStart ? 0.1 : 0.4),
                 width: (timerValue / (maxTime * 60)) * sliderWidth,
                 height: AppVariables.SLIDER_HEIGHT,
               ),
