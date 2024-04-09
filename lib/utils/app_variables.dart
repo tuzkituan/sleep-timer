@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class AppVariables {
   static const String APP_NAME = "Sleep Timer";
   static const String APP_VERSION = "1.0.0";
@@ -8,4 +10,6 @@ class AppVariables {
 
   static const int MAX_TIME = 120;
   static const int INIT_TIME = 30;
+
+  static final navigatorKey = GlobalKey<NavigatorState>();
 }

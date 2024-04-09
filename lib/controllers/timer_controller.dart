@@ -1,13 +1,9 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
-import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 
 class TimerController extends ChangeNotifier {
   // this will be used as notification channel id
@@ -22,95 +18,32 @@ class TimerController extends ChangeNotifier {
   bool needReset = false;
   int currentMinute = -1;
 
-  Future<void> initializeService() async {
-    final service = FlutterBackgroundService();
-
-    const AndroidNotificationChannel channel = AndroidNotificationChannel(
-      notificationChannelId, // id
-      'Sleep Timer', // title
-      importance: Importance.low, // importance must be at low or higher level
-    );
-
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
-
-    await service.configure(
-      androidConfiguration: AndroidConfiguration(
-        // this will be executed when app is in foreground or background in separated isolate
-        onStart: onStart,
-
-        // auto start service
-        autoStart: true,
-        isForegroundMode: true,
-
-        notificationChannelId: notificationChannelId,
-        foregroundServiceNotificationId: notificationId,
-      ),
-      iosConfiguration: IosConfiguration(
-        // auto start service
-        autoStart: true,
-      ),
-    );
-  }
-
-  @pragma('vm:entry-point')
-  static Future<void> onStart(ServiceInstance service) async {
-    // Only available for flutter 3.0.0 and later
-    DartPluginRegistrant.ensureInitialized();
-
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-
-    if (service is AndroidServiceInstance) {
-      service.on('setAsForeground').listen((event) {
-        service.setAsForegroundService();
-      });
-
-      service.on('setAsBackground').listen((event) {
-        service.setAsBackgroundService();
-      });
-
-      service.on('stopService').listen((event) {
-        service.stopSelf();
-      });
-
-      service.on('startTimer').listen((event) async {
-        if (await service.isForegroundService()) {
-          flutterLocalNotificationsPlugin.show(
-            notificationId,
-            "You're set!",
-            '${event?['value']} minutes left',
-            const NotificationDetails(
-              android: AndroidNotificationDetails(
-                "sleep_timer_channel",
-                'Sleep Timer',
-                ongoing: true,
-                playSound: false,
-                priority: Priority.low,
-                actions: [
-                  AndroidNotificationAction(
-                    'stop',
-                    'Stop',
-                    showsUserInterface: true,
-                  ),
-                  AndroidNotificationAction(
-                    'extend',
-                    'Extend',
-                    showsUserInterface: true,
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-      });
-    }
-  }
+// flutterLocalNotificationsPlugin.show(
+//             notificationId,
+//             "You're set!",
+//             '${event?['value']} minutes left',
+//             const NotificationDetails(
+//               android: AndroidNotificationDetails(
+//                 "sleep_timer_channel",
+//                 'Sleep Timer',
+//                 ongoing: true,
+//                 playSound: false,
+//                 priority: Priority.low,
+//                 actions: [
+//                   AndroidNotificationAction(
+//                     'stop',
+//                     'Stop',
+//                     showsUserInterface: true,
+//                   ),
+//                   AndroidNotificationAction(
+//                     'extend',
+//                     'Extend',
+//                     showsUserInterface: true,
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           );
 
   void setTimerValue(int value) {
     timerValue = value;
@@ -122,11 +55,6 @@ class TimerController extends ChangeNotifier {
     await session.configure(const AudioSessionConfiguration.music());
     isStart = true;
     notifyListeners();
-
-    final isRunning = await FlutterBackgroundService().isRunning();
-    if (!isRunning) {
-      await FlutterBackgroundService().startService();
-    }
 
     const oneSec = Duration(seconds: 1);
     _timer = Timer.periodic(
@@ -140,7 +68,6 @@ class TimerController extends ChangeNotifier {
             print("end");
             await session.setActive(false);
           }
-          FlutterBackgroundService().invoke("stopService");
           timer.cancel();
           timerValue = AppVariables.INIT_TIME * 60;
           currentMinute = -1;
@@ -169,7 +96,6 @@ class TimerController extends ChangeNotifier {
     currentMinute = -1;
     isStart = false;
     notifyListeners();
-    FlutterBackgroundService().invoke("stopService");
   }
 
   Map<String, String> getTime() {
@@ -184,7 +110,7 @@ class TimerController extends ChangeNotifier {
   }
 
   Future<void> showNotification({int minutes = 0}) async {
-    FlutterBackgroundService().invoke("startTimer", {"value": minutes});
+    // FlutterBackgroundService().invoke("startTimer", {"value": minutes});
   }
 
   Future<void> extendTimer() async {
