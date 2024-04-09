@@ -22,48 +22,48 @@ class TimerController extends ChangeNotifier {
   int timerValue = AppVariables.INIT_TIME * 60;
 
   void initForegroundTask() async {
-    FlutterForegroundTask.init(
-      androidNotificationOptions: AndroidNotificationOptions(
-        id: notificationId,
-        channelId: notificationChannelId,
-        channelName: 'Sleep Timer Foreground Service',
-        channelDescription:
-            'This notification appears when the foreground service is running.',
-        channelImportance: NotificationChannelImportance.LOW,
-        priority: NotificationPriority.LOW,
-        isSticky: true,
-        iconData: const NotificationIconData(
-          resType: ResourceType.drawable,
-          resPrefix: ResourcePrefix.ic,
-          name: 'bg_service_small',
-        ),
-        buttons: [
-          const NotificationButton(
-            id: 'stop',
-            text: 'Stop',
-          ),
-          const NotificationButton(
-            id: 'extend',
-            text: 'Extend',
-          ),
-        ],
-      ),
-      iosNotificationOptions: const IOSNotificationOptions(
-        showNotification: true,
-        playSound: false,
-      ),
-      foregroundTaskOptions: const ForegroundTaskOptions(
-        interval: 1000,
-        isOnceEvent: false,
-        autoRunOnBoot: true,
-        allowWakeLock: true,
-        allowWifiLock: true,
-      ),
-    );
-
     if (await FlutterForegroundTask.isRunningService) {
       final newReceivePort = FlutterForegroundTask.receivePort;
       _registerReceivePort(newReceivePort);
+    } else {
+      FlutterForegroundTask.init(
+        androidNotificationOptions: AndroidNotificationOptions(
+          id: notificationId,
+          channelId: notificationChannelId,
+          channelName: 'Sleep Timer Foreground Service',
+          channelDescription:
+              'This notification appears when the foreground service is running.',
+          channelImportance: NotificationChannelImportance.LOW,
+          priority: NotificationPriority.LOW,
+          isSticky: true,
+          iconData: const NotificationIconData(
+            resType: ResourceType.drawable,
+            resPrefix: ResourcePrefix.ic,
+            name: 'bg_service_small',
+          ),
+          buttons: [
+            const NotificationButton(
+              id: 'stop',
+              text: 'Stop',
+            ),
+            const NotificationButton(
+              id: 'extend',
+              text: 'Extend',
+            ),
+          ],
+        ),
+        iosNotificationOptions: const IOSNotificationOptions(
+          showNotification: true,
+          playSound: false,
+        ),
+        foregroundTaskOptions: const ForegroundTaskOptions(
+          interval: 1000,
+          isOnceEvent: false,
+          autoRunOnBoot: true,
+          allowWakeLock: true,
+          allowWifiLock: true,
+        ),
+      );
     }
   }
 
