@@ -13,7 +13,7 @@ class TimerController extends ChangeNotifier {
   // this will be used as notification channel id
   static const notificationChannelId = 'my_foreground';
 
-// this will be used for notification id, So you can update your custom notification with this id.
+  // this will be used for notification id, So you can update your custom notification with this id.
   static const notificationId = 3;
 
   Timer? _timer;
@@ -27,7 +27,7 @@ class TimerController extends ChangeNotifier {
 
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       notificationChannelId, // id
-      'SleepTimer Foreground Service', // title
+      'Sleep Timer', // title
       importance: Importance.low, // importance must be at low or higher level
     );
 
@@ -45,7 +45,7 @@ class TimerController extends ChangeNotifier {
         onStart: onStart,
 
         // auto start service
-        autoStart: false,
+        autoStart: true,
         isForegroundMode: true,
 
         notificationChannelId: notificationChannelId,
@@ -88,7 +88,7 @@ class TimerController extends ChangeNotifier {
             const NotificationDetails(
               android: AndroidNotificationDetails(
                 "sleep_timer_channel",
-                'SleepTimer',
+                'Sleep Timer',
                 ongoing: true,
                 playSound: false,
                 priority: Priority.low,
@@ -140,10 +140,12 @@ class TimerController extends ChangeNotifier {
             print("end");
             await session.setActive(false);
           }
-
+          FlutterBackgroundService().invoke("stopService");
           timer.cancel();
           timerValue = AppVariables.INIT_TIME * 60;
+          currentMinute = -1;
           isStart = false;
+
           notifyListeners();
         } else {
           int min = (timerValue / 60).floor();
@@ -164,6 +166,7 @@ class TimerController extends ChangeNotifier {
     if (_timer != null) {
       _timer?.cancel();
     }
+    currentMinute = -1;
     isStart = false;
     notifyListeners();
     FlutterBackgroundService().invoke("stopService");

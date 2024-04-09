@@ -14,7 +14,7 @@ import 'package:sleep_timer/services/settings_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  TimerController().initializeService();
+  await TimerController().initializeService();
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarBrightness: Brightness.light,
@@ -92,10 +92,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
+  void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.detached) {
-      FlutterLocalNotificationsPlugin().cancelAll();
-      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
       exit(0);
     }
   }
