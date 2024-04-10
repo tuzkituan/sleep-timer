@@ -6,6 +6,7 @@ import 'package:sleep_timer/controllers/settings_controller.dart';
 import 'package:sleep_timer/controllers/timer_controller.dart';
 import 'package:sleep_timer/home_page.dart';
 import 'package:sleep_timer/services/settings_service.dart';
+import 'package:sleep_timer/services/timer_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,10 +24,12 @@ void main() async {
   ]);
 
   final settingsController = SettingsController(SettingsService());
+  final timerController = TimerController(TimerService());
 
   // Load the user's preferred theme while the splash screen is displayed.
   // This prevents a sudden theme change when the app is first displayed.
   await settingsController.loadSettings();
+  await timerController.loadState();
 
   runApp(
     MultiProvider(
@@ -35,7 +38,7 @@ void main() async {
           create: (ctx) => settingsController,
         ),
         ChangeNotifierProvider(
-          create: (ctx) => TimerController(),
+          create: (ctx) => timerController,
         ),
       ],
       child: const MyApp(),

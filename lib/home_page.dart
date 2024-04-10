@@ -3,11 +3,12 @@ import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+import 'package:provider/provider.dart';
 import 'package:sleep_timer/components/app_title/app_title.dart';
 import 'package:sleep_timer/components/settings_bottom_sheet/settings_bottom_sheet.dart';
+import 'package:sleep_timer/controllers/timer_controller.dart';
 import 'package:sleep_timer/screens/sleep_page.dart';
 import 'package:sleep_timer/task_handlers/foreground_task.dart';
-import 'package:sleep_timer/utils/app_variables.dart';
 
 @pragma('vm:entry-point')
 void startCallback() {
@@ -23,18 +24,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int timerValue = AppVariables.INIT_TIME * 60;
-  bool isStart = false;
   ReceivePort? _receivePort;
   static const notificationChannelId = 'my_foreground';
   static const notificationId = 145;
 
-  void stopTimer() async {
-    setState(() {
-      isStart = false;
-    });
+  void onStopService() async {
     closeReceivePort();
     FlutterForegroundTask.stopService();
+  }
+
+  void onStartService() async {
+    startForegroundTask();
   }
 
   void closeReceivePort() {
@@ -43,7 +43,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<bool> startForegroundTask() async {
-    await FlutterForegroundTask.saveData(key: 'timerValue', value: timerValue);
+    TimerController timerController =
+        Provider.of<TimerController>(context, listen: false);
+    await FlutterForegroundTask.saveData(
+      key: 'timerValue',
+      value: timerController.timerValue,
+    );
 
     // Register the receivePort before starting the service.
     final ReceivePort? receivePort = FlutterForegroundTask.receivePort;
@@ -73,16 +78,16 @@ class _HomePageState extends State<HomePage> {
 
     _receivePort = newReceivePort;
     _receivePort?.listen((data) {
+      TimerController timerController =
+          Provider.of<TimerController>(context, listen: false);
       if (data is int) {
-        setState(() {
-          timerValue = data;
-          if (!isStart) {
-            isStart = true;
-          }
-        });
+        timerController.updateTimer(
+          data,
+        );
       } else if (data is String) {
         if (data == 'stop') {
-          stopTimer();
+          timerController.stopTimer();
+          onStopService();
         }
       }
     });
@@ -197,20 +202,8 @@ class _HomePageState extends State<HomePage> {
         body: SafeArea(
           top: true,
           child: SleepPage(
-            isStart: isStart,
-            onSliderChange: (val) {
-              setState(() {
-                timerValue = val;
-              });
-            },
-            startTimer: () {
-              setState(() {
-                isStart = true;
-              });
-              startForegroundTask();
-            },
-            stopTimer: stopTimer,
-            timerValue: timerValue,
+            onStartService: onStartService,
+            onStopService: onStopService,
           ),
         ),
       ),
