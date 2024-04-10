@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:provider/provider.dart';
 import 'package:sleep_timer/services/timer_service.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
@@ -16,11 +17,16 @@ class TimerController extends ChangeNotifier {
   int timerValue = AppVariables.INIT_TIME * 60;
 
   Future<void> loadState() async {
-    int? temp = await _timerService.loadTimerValue();
-    if (temp != null) {
-      timerValue = temp;
+    var isRunning = await FlutterForegroundTask.isRunningService;
+    if (isRunning == true) {
+      int? temp = await _timerService.loadTimerValue();
+      if (temp != null) {
+        timerValue = temp;
+      }
+      isStart = await _timerService.loadIsStart();
+    } else {
+      _timerService.clear();
     }
-    isStart = await _timerService.loadIsStart();
     notifyListeners();
   }
 

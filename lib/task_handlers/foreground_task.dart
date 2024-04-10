@@ -4,6 +4,7 @@ import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
 
 class ForegroundTask extends TaskHandler {
@@ -57,13 +58,14 @@ class ForegroundTask extends TaskHandler {
 
   // Called when the notification button on the Android platform is pressed.
   @override
-  void onNotificationButtonPressed(String id) {
-    print("sendPort: $_sendPort");
-    print('onNotificationButtonPressed >> $id');
+  void onNotificationButtonPressed(String id) async {
     switch (id) {
       case "stop":
         _sendPort?.send("stop");
         FlutterForegroundTask.stopService();
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.remove('isStart');
+        prefs.remove('timerValue');
         break;
       case "extend":
         var newValue = timerValue + AppVariables.EXTEND_TIME * 60;

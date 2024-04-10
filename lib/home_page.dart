@@ -70,6 +70,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   bool _registerReceivePort(ReceivePort? newReceivePort) {
+    // only run when app is open
     if (newReceivePort == null) {
       return false;
     }
@@ -77,9 +78,10 @@ class _HomePageState extends State<HomePage> {
     closeReceivePort();
 
     _receivePort = newReceivePort;
-    _receivePort?.listen((data) {
+    _receivePort?.listen((data) async {
       TimerController timerController =
           Provider.of<TimerController>(context, listen: false);
+
       if (data is int) {
         timerController.updateTimer(
           data,
@@ -141,9 +143,9 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
-    if (!await FlutterForegroundTask.isIgnoringBatteryOptimizations) {
-      await FlutterForegroundTask.requestIgnoreBatteryOptimization();
-    }
+    // if (!await FlutterForegroundTask.isIgnoringBatteryOptimizations) {
+    //   await FlutterForegroundTask.requestIgnoreBatteryOptimization();
+    // }
 
     final NotificationPermission notificationPermissionStatus =
         await FlutterForegroundTask.checkNotificationPermission();

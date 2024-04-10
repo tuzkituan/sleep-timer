@@ -4,12 +4,11 @@ import 'package:sleep_timer/controllers/timer_controller.dart';
 import 'package:sleep_timer/screens/default_theme/default_theme.dart';
 
 class SleepPage extends StatefulWidget {
-  void Function() onStartService;
-  void Function() onStopService;
+  final void Function() onStartService;
+  final void Function() onStopService;
 
-  SleepPage(
-      {Key? key, required this.onStopService, required this.onStartService})
-      : super(key: key);
+  const SleepPage(
+      {super.key, required this.onStopService, required this.onStartService});
 
   @override
   _SleepPageState createState() => _SleepPageState();

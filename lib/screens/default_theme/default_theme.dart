@@ -15,14 +15,15 @@ class DefaultTheme extends StatelessWidget {
   final Map<String, dynamic> finalTime;
   final void Function(int sliderValue) onSliderChange;
 
-  DefaultTheme(
-      {super.key,
-      required this.isStart,
-      required this.timerValue,
-      required this.startTimer,
-      required this.stopTimer,
-      required this.finalTime,
-      required this.onSliderChange});
+  DefaultTheme({
+    super.key,
+    required this.isStart,
+    required this.timerValue,
+    required this.startTimer,
+    required this.stopTimer,
+    required this.finalTime,
+    required this.onSliderChange,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -54,11 +55,13 @@ class DefaultTheme extends StatelessWidget {
                     width: MediaQuery.of(context).size.width * 0.8,
                   ),
                 ),
-                const Text(
-                  "stop playing in",
+                Text(
+                  "stop playing in".toUpperCase(),
                   style: TextStyle(
-                    // color: Colors.white,
-                    fontSize: 18,
+                    fontSize: 12,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.grey[400]!,
+                    letterSpacing: 1.4,
                   ),
                 ),
                 const SizedBox(
