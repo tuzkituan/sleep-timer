@@ -44,11 +44,13 @@ class TimerController extends ChangeNotifier {
 
   Future<void> startTimer() async {
     isStart = true;
+    _timerService.saveIsStart(true);
     notifyListeners();
   }
 
   void stopTimer() async {
     isStart = false;
+    _timerService.saveIsStart(false);
     notifyListeners();
   }
 
