@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> {
 
     await FlutterForegroundTask.saveData(
       key: 'timerValue',
-      value: timerController.timerValue,
+      value: timerController.timerValue.roundToDouble(),
     );
 
     // Register the receivePort before starting the service.
@@ -77,7 +77,8 @@ class _HomePageState extends State<HomePage> {
     closeReceivePort();
     _receivePort = newReceivePort;
     _receivePort?.listen((data) async {
-      if (data is int) {
+      print('Receive data: $data');
+      if (data is double) {
         TimerController.of(context).updateTimer(
           data,
         );

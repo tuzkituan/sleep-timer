@@ -2,15 +2,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class TimerService {
   /// Loads the User's preferred ThemeMode from local or remote storage.
-  Future<int?> loadTimerValue() async {
+  Future<double?> loadTimerValue() async {
     final prefs = await SharedPreferences.getInstance();
-    final timerValue = prefs.getInt('timerValue');
+    final timerValue = prefs.getDouble('timerValue');
     return timerValue;
   }
 
-  Future<void> saveTimerValue(int value) async {
+  Future<void> saveTimerValue(double value) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setInt('timerValue', value);
+    prefs.setDouble('timerValue', value);
   }
 
   Future<bool> loadIsStart() async {

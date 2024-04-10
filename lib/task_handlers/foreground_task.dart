@@ -8,15 +8,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
 
 class ForegroundTask extends TaskHandler {
-  SendPort? _sendPort;
-  int timerValue = 0;
+  double timerValue = 0;
 
   // Called when the task is started.
   @override
   void onStart(DateTime timestamp, SendPort? sendPort) async {
-    _sendPort = sendPort;
-
-    final value = await FlutterForegroundTask.getData<int>(key: 'timerValue');
+    final value =
+        await FlutterForegroundTask.getData<double>(key: 'timerValue');
     if (value != null) {
       timerValue = value;
     }
@@ -25,6 +23,7 @@ class ForegroundTask extends TaskHandler {
   // Called every [interval] milliseconds in [ForegroundTaskOptions].
   @override
   void onRepeatEvent(DateTime timestamp, SendPort? sendPort) async {
+    print("timer value: $timerValue");
     if (timerValue > 0) {
       int min = (timerValue / 60).floor();
       FlutterForegroundTask.updateService(
@@ -68,7 +67,7 @@ class ForegroundTask extends TaskHandler {
         FlutterForegroundTask.stopService();
         break;
       case "extend":
-        var newValue = timerValue + AppVariables.EXTEND_TIME * 60;
+        double newValue = timerValue + AppVariables.EXTEND_TIME * 60;
         if (newValue > AppVariables.MAX_TIME * 60) {
           newValue = AppVariables.MAX_TIME * 60;
         }

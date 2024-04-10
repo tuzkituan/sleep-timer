@@ -9,13 +9,13 @@ import 'package:sleep_timer/utils/app_variables.dart';
 
 class DefaultTheme extends StatelessWidget {
   final bool isStart;
-  final int timerValue;
+  final double timerValue;
   final void Function() startTimer;
   final void Function() stopTimer;
   final Map<String, dynamic> finalTime;
-  final void Function(int sliderValue) onSliderChange;
+  final void Function(double sliderValue) onSliderChange;
 
-  DefaultTheme({
+  const DefaultTheme({
     super.key,
     required this.isStart,
     required this.timerValue,
@@ -36,7 +36,7 @@ class DefaultTheme extends StatelessWidget {
       padding: const EdgeInsets.only(
         left: AppVariables.MAIN_PADDING,
         right: AppVariables.MAIN_PADDING,
-        bottom: AppVariables.MAIN_PADDING,
+        bottom: AppVariables.MAIN_PADDING / 2,
         top: AppVariables.MAIN_PADDING,
       ),
       child: Column(
@@ -49,6 +49,12 @@ class DefaultTheme extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
+                Center(
+                  child: SvgPicture.asset(
+                    character,
+                    width: MediaQuery.of(context).size.width * 0.8,
+                  ),
+                ),
                 Text(
                   "stop playing in".toUpperCase(),
                   style: TextStyle(
@@ -66,14 +72,8 @@ class DefaultTheme extends StatelessWidget {
                   second: finalTime["second"],
                   isStart: isStart,
                 ),
-                const SizedBox(
-                  height: 0,
-                ),
-                Center(
-                  child: SvgPicture.asset(
-                    character,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                  ),
+                SizedBox(
+                  height: 24,
                 ),
               ],
             ),

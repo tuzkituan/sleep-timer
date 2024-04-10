@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 
-double numberFontSize = 70;
-
 class MainTimerText extends StatelessWidget {
   final String minute;
   final String second;
@@ -22,56 +20,29 @@ class MainTimerText extends StatelessWidget {
       highlightColor: isStart ? Colors.white70 : Colors.white70,
       enabled: isStart,
       period: const Duration(seconds: 1),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             minute,
             style: GoogleFonts.kodeMono(
-              fontSize: numberFontSize,
+              fontSize: 100,
               height: 0,
               fontWeight: FontWeight.w700,
               color: Colors.white,
             ),
           ),
-          const SizedBox(
-            width: 4,
-          ),
           Text(
-            "m",
+            "minutes".toUpperCase(),
             style: GoogleFonts.kodeMono(
               color: Colors.white,
-              height: 2.1,
-              fontSize: 28,
+              // height: 1.2,
+              fontSize: 26,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(
-            width: 16,
-          ),
-          Text(
-            second,
-            style: GoogleFonts.kodeMono(
-              fontSize: numberFontSize,
-              height: 0,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(
-            width: 4,
-          ),
-          Text(
-            "s",
-            style: GoogleFonts.kodeMono(
-              color: Colors.white,
-              height: 2.1,
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-            ),
-          )
         ],
       ),
     );
