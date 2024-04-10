@@ -1,11 +1,19 @@
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:sleep_timer/components/app_title/app_title.dart';
 import 'package:sleep_timer/components/settings_bottom_sheet/settings_bottom_sheet.dart';
-import 'package:sleep_timer/controllers/timer_controller.dart';
 import 'package:sleep_timer/screens/sleep_page.dart';
+import 'package:sleep_timer/task_handlers/my_task_handler.dart';
+import 'package:sleep_timer/utils/app_variables.dart';
+
+@pragma('vm:entry-point')
+void startCallback() {
+  // The setTaskHandler function must be called to handle the task in the background.
+  FlutterForegroundTask.setTaskHandler(MyTaskHandler());
+}
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,6 +23,114 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  int timerValue = AppVariables.INIT_TIME * 60;
+  bool isStart = false;
+  ReceivePort? _receivePort;
+  static const notificationChannelId = 'my_foreground';
+  static const notificationId = 145;
+
+  void stopTimer() async {
+    setState(() {
+      isStart = false;
+    });
+    closeReceivePort();
+    FlutterForegroundTask.stopService();
+  }
+
+  void closeReceivePort() {
+    _receivePort?.close();
+    _receivePort = null;
+  }
+
+  Future<bool> startForegroundTask() async {
+    await FlutterForegroundTask.saveData(key: 'timerValue', value: timerValue);
+
+    // Register the receivePort before starting the service.
+    final ReceivePort? receivePort = FlutterForegroundTask.receivePort;
+    final bool isRegistered = _registerReceivePort(receivePort);
+    if (!isRegistered) {
+      print('Failed to register receivePort!');
+      return false;
+    }
+
+    if (await FlutterForegroundTask.isRunningService) {
+      return FlutterForegroundTask.restartService();
+    } else {
+      return FlutterForegroundTask.startService(
+        notificationTitle: '',
+        notificationText: '',
+        callback: startCallback,
+      );
+    }
+  }
+
+  bool _registerReceivePort(ReceivePort? newReceivePort) {
+    if (newReceivePort == null) {
+      return false;
+    }
+
+    closeReceivePort();
+
+    _receivePort = newReceivePort;
+    _receivePort?.listen((data) {
+      if (data is int) {
+        setState(() {
+          timerValue = data;
+          if (!isStart) {
+            isStart = true;
+          }
+        });
+      } else if (data is String) {
+        if (data == 'stop') {
+          stopTimer();
+        }
+      }
+    });
+
+    return _receivePort != null;
+  }
+
+  void initForegroundTask() async {
+    FlutterForegroundTask.init(
+      androidNotificationOptions: AndroidNotificationOptions(
+        id: notificationId,
+        channelId: notificationChannelId,
+        channelName: 'Sleep Timer Foreground Service',
+        channelDescription:
+            'This notification appears when the foreground service is running.',
+        channelImportance: NotificationChannelImportance.LOW,
+        priority: NotificationPriority.LOW,
+        isSticky: true,
+        iconData: const NotificationIconData(
+          resType: ResourceType.drawable,
+          resPrefix: ResourcePrefix.ic,
+          name: 'bg_service_small',
+        ),
+        buttons: [
+          const NotificationButton(
+            id: 'stop',
+            text: 'Stop',
+          ),
+          const NotificationButton(
+            id: 'extend',
+            text: 'Extend',
+          ),
+        ],
+      ),
+      iosNotificationOptions: const IOSNotificationOptions(
+        showNotification: true,
+        playSound: false,
+      ),
+      foregroundTaskOptions: const ForegroundTaskOptions(
+        interval: 1000,
+        isOnceEvent: false,
+        autoRunOnBoot: true,
+        allowWakeLock: true,
+        allowWifiLock: true,
+      ),
+    );
+  }
+
   Future<void> _requestPermissionForAndroid() async {
     if (!Platform.isAndroid) {
       return;
@@ -36,18 +152,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _requestPermissionForAndroid();
-      TimerController().initForegroundTask();
+      initForegroundTask();
+      if (await FlutterForegroundTask.isRunningService) {
+        final newReceivePort = FlutterForegroundTask.receivePort;
+        _registerReceivePort(newReceivePort);
+      }
     });
   }
 
   @override
   void dispose() {
-    TimerController().closeReceivePort();
+    closeReceivePort();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    print("timerValue: $timerValue");
     return WithForegroundTask(
       child: Scaffold(
         appBar: AppBar(
@@ -76,7 +197,22 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ),
         body: SafeArea(
           top: true,
-          child: SleepPage(),
+          child: SleepPage(
+            isStart: isStart,
+            onSliderChange: (val) {
+              setState(() {
+                timerValue = val;
+              });
+            },
+            startTimer: () {
+              setState(() {
+                isStart = true;
+              });
+              startForegroundTask();
+            },
+            stopTimer: stopTimer,
+            timerValue: timerValue,
+          ),
         ),
       ),
     );

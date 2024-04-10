@@ -8,13 +8,13 @@ import 'package:sleep_timer/utils/app_variables.dart';
 
 class MyTaskHandler extends TaskHandler {
   SendPort? _sendPort;
-  late int timerValue;
+  int timerValue = 0;
 
   // Called when the task is started.
   @override
   void onStart(DateTime timestamp, SendPort? sendPort) async {
-    print("sendPort: $sendPort");
     _sendPort = sendPort;
+
     final value = await FlutterForegroundTask.getData<int>(key: 'timerValue');
     if (value != null) {
       timerValue = value;
@@ -30,8 +30,6 @@ class MyTaskHandler extends TaskHandler {
         notificationTitle: "You're set!",
         notificationText: '$min minutes left',
       );
-      print("timerValue: $timerValue");
-
       timerValue--;
       sendPort?.send(timerValue);
     }
