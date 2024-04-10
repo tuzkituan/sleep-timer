@@ -45,6 +45,7 @@ class _HomePageState extends State<HomePage> {
   Future<bool> startForegroundTask() async {
     TimerController timerController =
         Provider.of<TimerController>(context, listen: false);
+
     await FlutterForegroundTask.saveData(
       key: 'timerValue',
       value: timerController.timerValue,
@@ -70,26 +71,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   bool _registerReceivePort(ReceivePort? newReceivePort) {
-    // only run when app is open
     if (newReceivePort == null) {
       return false;
     }
-
     closeReceivePort();
-
     _receivePort = newReceivePort;
     _receivePort?.listen((data) async {
-      TimerController timerController =
-          Provider.of<TimerController>(context, listen: false);
-
       if (data is int) {
-        timerController.updateTimer(
+        TimerController.of(context).updateTimer(
           data,
         );
-      } else if (data is String) {
+      }
+      if (data is String) {
         if (data == 'stop') {
-          timerController.stopTimer();
-          onStopService();
+          TimerController.of(context).stopTimer();
+          closeReceivePort();
         }
       }
     });
@@ -142,10 +138,6 @@ class _HomePageState extends State<HomePage> {
     if (!Platform.isAndroid) {
       return;
     }
-
-    // if (!await FlutterForegroundTask.isIgnoringBatteryOptimizations) {
-    //   await FlutterForegroundTask.requestIgnoreBatteryOptimization();
-    // }
 
     final NotificationPermission notificationPermissionStatus =
         await FlutterForegroundTask.checkNotificationPermission();

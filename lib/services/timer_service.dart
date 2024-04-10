@@ -24,8 +24,9 @@ class TimerService {
     prefs.setBool('isStart', value);
   }
 
-  Future<void> clear() async {
+  Future<void> reset() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.clear();
+    prefs.remove('isStart');
+    prefs.remove('timerValue');
   }
 }

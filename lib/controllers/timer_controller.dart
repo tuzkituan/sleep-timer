@@ -25,7 +25,7 @@ class TimerController extends ChangeNotifier {
       }
       isStart = await _timerService.loadIsStart();
     } else {
-      _timerService.clear();
+      _timerService.reset();
     }
     notifyListeners();
   }

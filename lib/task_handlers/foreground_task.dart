@@ -53,7 +53,11 @@ class ForegroundTask extends TaskHandler {
   // Called when the notification button on the Android platform is pressed.
   @override
   void onDestroy(DateTime timestamp, SendPort? sendPort) async {
-    // FlutterForegroundTask.stopService();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('isStart');
+    prefs.remove('timerValue');
+
+    sendPort?.send("stop");
   }
 
   // Called when the notification button on the Android platform is pressed.
@@ -61,11 +65,7 @@ class ForegroundTask extends TaskHandler {
   void onNotificationButtonPressed(String id) async {
     switch (id) {
       case "stop":
-        _sendPort?.send("stop");
         FlutterForegroundTask.stopService();
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.remove('isStart');
-        prefs.remove('timerValue');
         break;
       case "extend":
         var newValue = timerValue + AppVariables.EXTEND_TIME * 60;
@@ -88,16 +88,6 @@ class ForegroundTask extends TaskHandler {
     }
   }
 
-  // Called when the notification itself on the Android platform is pressed.
-  //
-  // "android.permission.SYSTEM_ALERT_WINDOW" permission must be granted for
-  // this function to be called.
   @override
-  void onNotificationPressed() {
-    // Note that the app will only route to "/resume-route" when it is exited so
-    // it will usually be necessary to send a message through the send port to
-    // signal it to restore state when the app is already started.
-    // FlutterForegroundTask.launchApp("/resume-route");
-    // _sendPort?.send('onNotificationPressed');
-  }
+  void onNotificationPressed() {}
 }
