@@ -6,13 +6,13 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:sleep_timer/components/app_title/app_title.dart';
 import 'package:sleep_timer/components/settings_bottom_sheet/settings_bottom_sheet.dart';
 import 'package:sleep_timer/screens/sleep_page.dart';
-import 'package:sleep_timer/task_handlers/my_task_handler.dart';
+import 'package:sleep_timer/task_handlers/foreground_task.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
 
 @pragma('vm:entry-point')
 void startCallback() {
   // The setTaskHandler function must be called to handle the task in the background.
-  FlutterForegroundTask.setTaskHandler(MyTaskHandler());
+  FlutterForegroundTask.setTaskHandler(ForegroundTask());
 }
 
 class HomePage extends StatefulWidget {
@@ -22,7 +22,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+class _HomePageState extends State<HomePage> {
   int timerValue = AppVariables.INIT_TIME * 60;
   bool isStart = false;
   ReceivePort? _receivePort;
@@ -168,7 +168,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    print("timerValue: $timerValue");
     return WithForegroundTask(
       child: Scaffold(
         appBar: AppBar(

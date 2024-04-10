@@ -6,7 +6,7 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
 
-class MyTaskHandler extends TaskHandler {
+class ForegroundTask extends TaskHandler {
   SendPort? _sendPort;
   int timerValue = 0;
 
