@@ -21,10 +21,11 @@ class MainTimerText extends StatelessWidget {
       baseColor: isStart ? Colors.white30 : Colors.white70,
       highlightColor: isStart ? Colors.white70 : Colors.white70,
       enabled: isStart,
-      period: const Duration(seconds: 2),
+      period: const Duration(seconds: 1),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             minute,

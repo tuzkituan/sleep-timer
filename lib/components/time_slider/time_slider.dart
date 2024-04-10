@@ -60,7 +60,7 @@ class TimeSlider extends StatelessWidget {
                 color: SettingsController.of(context)
                     .currentTheme
                     .splashColor
-                    .withOpacity(isStart ? 0.1 : 0.4),
+                    .withOpacity(isStart ? 0.1 : 0.3),
                 width: (timerValue / (maxTime * 60)) * sliderWidth,
                 height: AppVariables.SLIDER_HEIGHT,
               ),
@@ -68,16 +68,16 @@ class TimeSlider extends StatelessWidget {
             isStart
                 ? Container()
                 : Positioned(
-                    left: (timerValue / (maxTime * 60)) * sliderWidth - 6,
-                    top: AppVariables.SLIDER_HEIGHT / 3.5,
-                    bottom: AppVariables.SLIDER_HEIGHT / 3.5,
+                    left: (timerValue / (maxTime * 60)) * sliderWidth - 5,
+                    top: AppVariables.SLIDER_HEIGHT / 4,
+                    bottom: AppVariables.SLIDER_HEIGHT / 4,
                     child: Container(
-                      width: 12,
+                      width: 10,
                       // height: 15,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: const BorderRadius.all(
-                          Radius.circular(99),
+                          Radius.circular(4),
                         ),
                         border: Border.all(
                           color: SettingsController.of(context)

@@ -45,16 +45,10 @@ class DefaultTheme extends StatelessWidget {
         children: [
           Expanded(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Center(
-                  child: SvgPicture.asset(
-                    character,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                  ),
-                ),
                 Text(
                   "stop playing in".toUpperCase(),
                   style: TextStyle(
@@ -71,6 +65,15 @@ class DefaultTheme extends StatelessWidget {
                   minute: finalTime["minute"],
                   second: finalTime["second"],
                   isStart: isStart,
+                ),
+                const SizedBox(
+                  height: 0,
+                ),
+                Center(
+                  child: SvgPicture.asset(
+                    character,
+                    width: MediaQuery.of(context).size.width * 0.8,
+                  ),
                 ),
               ],
             ),
