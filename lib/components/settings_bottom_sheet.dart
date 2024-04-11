@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:sleep_timer/controllers/settings_controller.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
+import 'package:sleep_timer/utils/layouts.dart';
 import 'package:sleep_timer/utils/themes.dart';
 
 class SettingsBottomSheet extends StatefulWidget {
@@ -14,6 +15,7 @@ class SettingsBottomSheet extends StatefulWidget {
 
 class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
   List<AppThemeKeys> themeKeys = AppThemeKeys.values.toList();
+  List<AppLayoutKeys> layoutKeys = AppLayoutKeys.values.toList();
 
   void onClose() {
     Navigator.pop(context);
@@ -21,6 +23,9 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    SettingsController settingsController = SettingsController.of(context);
+    AppLayoutKeys currentLayoutKey = settingsController.currentLayoutKey;
+
     return SafeArea(
       bottom: false,
       child: Container(
@@ -30,8 +35,7 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
           bottom: AppVariables.MAIN_PADDING / 4,
         ),
         decoration: BoxDecoration(
-          color:
-              SettingsController.of(context).currentTheme.dialogBackgroundColor,
+          color: settingsController.currentTheme.dialogBackgroundColor,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(0),
             topRight: Radius.circular(0),
@@ -80,7 +84,7 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
                         ThemeData? theme = ThemeList[themeKeys[index]] ??
                             ThemeList[AppThemeKeys.theme0];
                         bool isActive = themeKeys[index] ==
-                            SettingsController.of(context).currentThemeKey;
+                            settingsController.currentThemeKey;
                         String character =
                             ThemeCharacter[themeKeys[index]] ?? "";
 
@@ -94,11 +98,11 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
                               border: isActive
                                   ? Border.all(
                                       color: Colors.white,
-                                      width: 2,
+                                      width: 1.2,
                                     )
                                   : Border.all(
                                       color: Colors.transparent,
-                                      width: 2,
+                                      width: 1.2,
                                     ),
                             ),
                             padding: const EdgeInsets.all(12),
@@ -108,9 +112,7 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
                             ),
                           ),
                           onTap: () => {
-                            Provider.of<SettingsController>(context,
-                                    listen: false)
-                                .setTheme(
+                            settingsController.setTheme(
                               themeKeys[index],
                             ),
                           },
@@ -118,10 +120,90 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
                       },
                     ),
                   ),
+                  ...renderGroup(
+                    title: "layout",
+                    child: ClipRRect(
+                      clipBehavior: Clip.hardEdge,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                            AppVariables.MAIN_BORDER_RADIUS,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: renderSwitchButton(
+                                title: 'Z',
+                                value: AppLayoutKeys.initial,
+                                isActive:
+                                    currentLayoutKey == AppLayoutKeys.initial,
+                                onChanged: (value) {
+                                  settingsController.setLayout(value);
+                                },
+                              ),
+                            ),
+                            Expanded(
+                              child: renderSwitchButton(
+                                title: 'Circular',
+                                value: AppLayoutKeys.circular,
+                                isActive:
+                                    currentLayoutKey == AppLayoutKeys.circular,
+                                onChanged: (value) {
+                                  settingsController.setLayout(value);
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             )
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget renderSwitchButton({
+    required String title,
+    required AppLayoutKeys value,
+    required bool isActive,
+    required void Function(AppLayoutKeys value) onChanged,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        onChanged(value);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: AppVariables.MAIN_PADDING / 2,
+          horizontal: AppVariables.MAIN_PADDING / 4,
+        ),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: isActive ? Colors.white : Colors.transparent,
+            width: 1.2,
+          ),
+          color: isActive
+              ? Colors.black38
+              : SettingsController.of(context)
+                  .currentTheme
+                  .splashColor
+                  .withOpacity(0.1),
+        ),
+        child: Center(
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.normal,
+              color: Colors.grey,
+            ),
+          ),
         ),
       ),
     );

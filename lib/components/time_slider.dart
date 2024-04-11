@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sleep_timer/controllers/settings_controller.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
+import 'package:sleep_timer/utils/functions.dart';
 
 class TimeSlider extends StatelessWidget {
   late bool isStart;
-  late int timerValue;
+  late double timerValue;
   late Function onChange;
 
   TimeSlider({
@@ -35,7 +36,7 @@ class TimeSlider extends StatelessWidget {
           if (!isStart) {
             var x = details.localPosition.dx / sliderWidth;
             if (x >= 0 && x <= 1) {
-              onChange((x * maxTime * 60).round());
+              onChange((x * maxTime * 60));
             }
           }
         },
@@ -43,7 +44,7 @@ class TimeSlider extends StatelessWidget {
           if (!isStart) {
             var x = details.localPosition.dx / sliderWidth;
             if (x >= 0 && x <= 1) {
-              onChange((x * maxTime * 60).round());
+              onChange((x * maxTime * 60));
             }
           }
         },
@@ -57,10 +58,12 @@ class TimeSlider extends StatelessWidget {
             ),
             Positioned(
               child: Container(
-                color: SettingsController.of(context)
-                    .currentTheme
-                    .splashColor
-                    .withOpacity(isStart ? 0.1 : 0.4),
+                color: !isStart
+                    ? HexColor('#6DCFFF')
+                    : SettingsController.of(context)
+                        .currentTheme
+                        .splashColor
+                        .withOpacity(isStart ? 0.1 : 0.3),
                 width: (timerValue / (maxTime * 60)) * sliderWidth,
                 height: AppVariables.SLIDER_HEIGHT,
               ),
@@ -68,16 +71,16 @@ class TimeSlider extends StatelessWidget {
             isStart
                 ? Container()
                 : Positioned(
-                    left: (timerValue / (maxTime * 60)) * sliderWidth - 6,
-                    top: AppVariables.SLIDER_HEIGHT / 3.5,
-                    bottom: AppVariables.SLIDER_HEIGHT / 3.5,
+                    left: (timerValue / (maxTime * 60)) * sliderWidth - 5,
+                    top: AppVariables.SLIDER_HEIGHT / 4,
+                    bottom: AppVariables.SLIDER_HEIGHT / 4,
                     child: Container(
-                      width: 12,
+                      width: 10,
                       // height: 15,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: const BorderRadius.all(
-                          Radius.circular(99),
+                          Radius.circular(4),
                         ),
                         border: Border.all(
                           color: SettingsController.of(context)

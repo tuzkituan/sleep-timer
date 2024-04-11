@@ -1,0 +1,1 @@
+enum AppLayoutKeys { initial, circular }

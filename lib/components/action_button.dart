@@ -18,6 +18,9 @@ class ActionButton extends StatelessWidget {
           backgroundColor:
               isDanger ? Colors.red[900]!.withOpacity(0.7) : Colors.transparent,
           minimumSize: const Size.fromHeight(50),
+          padding: const EdgeInsets.symmetric(
+            vertical: 16,
+          ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(
               AppVariables.MAIN_BORDER_RADIUS,

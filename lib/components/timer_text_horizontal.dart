@@ -1,30 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:sleep_timer/controllers/timer_controller.dart';
 
-double numberFontSize = 64;
+double numberFontSize = 80;
 
-class MainTimerText extends StatelessWidget {
-  final String minute;
-  final String second;
-  final bool isStart;
-
-  const MainTimerText(
-      {super.key,
-      required this.minute,
-      required this.second,
-      required this.isStart});
+class TimerTextHorizontal extends StatelessWidget {
+  const TimerTextHorizontal({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
+    TimerController timerController = Provider.of<TimerController>(context);
+    bool isStart = timerController.isStart;
+    var finalTime = timerController.getTime();
+    String minute = finalTime["minute"]!;
+
     return Shimmer.fromColors(
       baseColor: isStart ? Colors.white30 : Colors.white70,
       highlightColor: isStart ? Colors.white70 : Colors.white70,
       enabled: isStart,
-      period: const Duration(seconds: 2),
+      period: const Duration(seconds: 1),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             minute,
@@ -42,35 +44,11 @@ class MainTimerText extends StatelessWidget {
             "m",
             style: GoogleFonts.kodeMono(
               color: Colors.white,
-              height: 2,
+              height: 2.2,
               fontSize: 28,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(
-            width: 16,
-          ),
-          Text(
-            second,
-            style: GoogleFonts.kodeMono(
-              fontSize: numberFontSize,
-              height: 0,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(
-            width: 4,
-          ),
-          Text(
-            "s",
-            style: GoogleFonts.kodeMono(
-              color: Colors.white,
-              height: 2,
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-            ),
-          )
         ],
       ),
     );
