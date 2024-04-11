@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sleep_timer/components/action_button/action_button.dart';
-import 'package:sleep_timer/components/main_timer_text/main_timer_text.dart';
-import 'package:sleep_timer/components/time_slider/time_slider.dart';
+import 'package:sleep_timer/components/action_button.dart';
+import 'package:sleep_timer/components/time_slider.dart';
+import 'package:sleep_timer/components/timer_text_horizontal.dart';
 import 'package:sleep_timer/controllers/settings_controller.dart';
-import 'package:sleep_timer/utils/themes.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
+import 'package:sleep_timer/utils/themes.dart';
 
 class DefaultTheme extends StatelessWidget {
   final bool isStart;
-  final int timerValue;
+  final double timerValue;
   final void Function() startTimer;
   final void Function() stopTimer;
   final Map<String, dynamic> finalTime;
-  final void Function(int sliderValue) onSliderChange;
+  final void Function(double sliderValue) onSliderChange;
 
-  DefaultTheme({
+  const DefaultTheme({
     super.key,
     required this.isStart,
     required this.timerValue,
@@ -36,7 +36,7 @@ class DefaultTheme extends StatelessWidget {
       padding: const EdgeInsets.only(
         left: AppVariables.MAIN_PADDING,
         right: AppVariables.MAIN_PADDING,
-        bottom: AppVariables.MAIN_PADDING,
+        bottom: AppVariables.MAIN_PADDING / 2,
         top: AppVariables.MAIN_PADDING,
       ),
       child: Column(
@@ -49,6 +49,12 @@ class DefaultTheme extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
+                Center(
+                  child: SvgPicture.asset(
+                    character,
+                    width: MediaQuery.of(context).size.width * 0.8,
+                  ),
+                ),
                 Text(
                   "stop playing in".toUpperCase(),
                   style: TextStyle(
@@ -61,22 +67,12 @@ class DefaultTheme extends StatelessWidget {
                 const SizedBox(
                   height: 8,
                 ),
-                MainTimerText(
-                  minute: finalTime["minute"],
-                  second: finalTime["second"],
-                  isStart: isStart,
-                ),
-                const SizedBox(
-                  height: 0,
-                ),
-                Center(
-                  child: SvgPicture.asset(
-                    character,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                  ),
-                ),
+                const TimerTextHorizontal(),
               ],
             ),
+          ),
+          const SizedBox(
+            height: 48,
           ),
           TimeSlider(
             isStart: isStart,

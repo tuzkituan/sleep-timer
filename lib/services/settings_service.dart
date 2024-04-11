@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sleep_timer/utils/layouts.dart';
 import 'package:sleep_timer/utils/themes.dart';
 
 class SettingsService {
@@ -20,5 +21,22 @@ class SettingsService {
     // http package to persist settings over the network.
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('themeKey', themeKey.toString());
+  }
+
+  // layout
+  Future<void> updateLayoutKey(AppLayoutKeys layoutKey) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('layoutKey', layoutKey.toString());
+  }
+
+  Future<AppLayoutKeys> loadLayoutKey() async {
+    final prefs = await SharedPreferences.getInstance();
+    final layoutKey = prefs.getString('layoutKey');
+    return layoutKey == null
+        ? AppLayoutKeys.initial
+        : AppLayoutKeys.values.firstWhere(
+            (e) => e.toString() == layoutKey,
+            orElse: () => AppLayoutKeys.initial,
+          );
   }
 }

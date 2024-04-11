@@ -14,14 +14,14 @@ class TimerController extends ChangeNotifier {
   static const notificationId = 145;
 
   bool isStart = false;
-  int timerValue = AppVariables.INIT_TIME * 60;
+  double timerValue = AppVariables.INIT_TIME * 60;
 
   Future<void> loadState() async {
     var isRunning = await FlutterForegroundTask.isRunningService;
     if (isRunning == true) {
       int? temp = await _timerService.loadTimerValue();
       if (temp != null) {
-        timerValue = temp;
+        timerValue = temp.toDouble();
       }
       isStart = await _timerService.loadIsStart();
     } else {
@@ -33,13 +33,13 @@ class TimerController extends ChangeNotifier {
   static TimerController of(BuildContext context, {bool listen = false}) =>
       Provider.of<TimerController>(context, listen: listen);
 
-  void setTimerValue(int value) {
+  void setTimerValue(double value) {
     timerValue = value;
     notifyListeners();
   }
 
   void updateTimer(int value) {
-    timerValue = value;
+    timerValue = value.toDouble();
     if (!isStart) {
       isStart = true;
     }
@@ -61,8 +61,9 @@ class TimerController extends ChangeNotifier {
   }
 
   Map<String, String> getTime() {
-    int sec = timerValue % 60;
-    int min = (timerValue / 60).floor();
+    print("timerValue herer: $timerValue");
+    num sec = timerValue % 60;
+    num min = (timerValue / 60).floor();
     String minute = min.toString().length <= 1 ? "0$min" : "$min";
     String second = sec.toString().length <= 1 ? "0$sec" : "$sec";
     return {

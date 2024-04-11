@@ -3,9 +3,8 @@ import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
-import 'package:provider/provider.dart';
-import 'package:sleep_timer/components/app_title/app_title.dart';
-import 'package:sleep_timer/components/settings_bottom_sheet/settings_bottom_sheet.dart';
+import 'package:sleep_timer/components/app_title.dart';
+import 'package:sleep_timer/components/settings_bottom_sheet.dart';
 import 'package:sleep_timer/controllers/timer_controller.dart';
 import 'package:sleep_timer/screens/sleep_page.dart';
 import 'package:sleep_timer/task_handlers/foreground_task.dart';
@@ -43,12 +42,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<bool> startForegroundTask() async {
-    TimerController timerController =
-        Provider.of<TimerController>(context, listen: false);
-
     await FlutterForegroundTask.saveData(
       key: 'timerValue',
-      value: timerController.timerValue,
+      value: (TimerController.of(context).timerValue / 60).ceil() * 60,
     );
 
     // Register the receivePort before starting the service.
@@ -77,6 +73,7 @@ class _HomePageState extends State<HomePage> {
     closeReceivePort();
     _receivePort = newReceivePort;
     _receivePort?.listen((data) async {
+      print('Receive data: $data');
       if (data is int) {
         TimerController.of(context).updateTimer(
           data,
