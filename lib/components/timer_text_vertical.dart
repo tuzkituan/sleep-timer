@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:sleep_timer/controllers/timer_controller.dart';
 
-class MainTimerText extends StatelessWidget {
-  final String minute;
-  final String second;
-  final bool isStart;
-
-  const MainTimerText(
-      {super.key,
-      required this.minute,
-      required this.second,
-      required this.isStart});
+class TimerTextVertical extends StatelessWidget {
+  const TimerTextVertical({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
+    TimerController timerController = Provider.of<TimerController>(context);
+    bool isStart = timerController.isStart;
+    var finalTime = timerController.getTime();
+    String minute = finalTime["minute"]!;
+
     return Shimmer.fromColors(
       baseColor: isStart ? Colors.white30 : Colors.white70,
       highlightColor: isStart ? Colors.white70 : Colors.white70,

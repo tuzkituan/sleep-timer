@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sleep_timer/controllers/settings_controller.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
+import 'package:sleep_timer/utils/functions.dart';
 
 class TimeSlider extends StatelessWidget {
   late bool isStart;
@@ -18,7 +19,7 @@ class TimeSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double sliderWidth = screenWidth - AppVariables.MAIN_PADDING * 2;
-    double maxTime = AppVariables.MAX_TIME;
+    int maxTime = AppVariables.MAX_TIME;
 
     return Container(
       clipBehavior: Clip.hardEdge,
@@ -35,7 +36,7 @@ class TimeSlider extends StatelessWidget {
           if (!isStart) {
             var x = details.localPosition.dx / sliderWidth;
             if (x >= 0 && x <= 1) {
-              onChange((x * maxTime * 60).round());
+              onChange((x * maxTime * 60));
             }
           }
         },
@@ -43,7 +44,7 @@ class TimeSlider extends StatelessWidget {
           if (!isStart) {
             var x = details.localPosition.dx / sliderWidth;
             if (x >= 0 && x <= 1) {
-              onChange((x * maxTime * 60).round());
+              onChange((x * maxTime * 60));
             }
           }
         },
@@ -57,10 +58,12 @@ class TimeSlider extends StatelessWidget {
             ),
             Positioned(
               child: Container(
-                color: SettingsController.of(context)
-                    .currentTheme
-                    .splashColor
-                    .withOpacity(isStart ? 0.1 : 0.3),
+                color: !isStart
+                    ? HexColor('#6DCFFF')
+                    : SettingsController.of(context)
+                        .currentTheme
+                        .splashColor
+                        .withOpacity(isStart ? 0.1 : 0.3),
                 width: (timerValue / (maxTime * 60)) * sliderWidth,
                 height: AppVariables.SLIDER_HEIGHT,
               ),

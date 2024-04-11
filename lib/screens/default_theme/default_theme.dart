@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sleep_timer/components/action_button/action_button.dart';
-import 'package:sleep_timer/components/main_timer_text/main_timer_text.dart';
-import 'package:sleep_timer/components/time_slider/time_slider.dart';
+import 'package:sleep_timer/components/action_button.dart';
+import 'package:sleep_timer/components/time_slider.dart';
+import 'package:sleep_timer/components/timer_text_horizontal.dart';
 import 'package:sleep_timer/controllers/settings_controller.dart';
-import 'package:sleep_timer/utils/themes.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
+import 'package:sleep_timer/utils/themes.dart';
 
 class DefaultTheme extends StatelessWidget {
   final bool isStart;
@@ -67,16 +67,12 @@ class DefaultTheme extends StatelessWidget {
                 const SizedBox(
                   height: 8,
                 ),
-                MainTimerText(
-                  minute: finalTime["minute"],
-                  second: finalTime["second"],
-                  isStart: isStart,
-                ),
-                SizedBox(
-                  height: 24,
-                ),
+                const TimerTextHorizontal(),
               ],
             ),
+          ),
+          const SizedBox(
+            height: 48,
           ),
           TimeSlider(
             isStart: isStart,

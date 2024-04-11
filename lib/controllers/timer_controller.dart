@@ -19,9 +19,9 @@ class TimerController extends ChangeNotifier {
   Future<void> loadState() async {
     var isRunning = await FlutterForegroundTask.isRunningService;
     if (isRunning == true) {
-      double? temp = await _timerService.loadTimerValue();
+      int? temp = await _timerService.loadTimerValue();
       if (temp != null) {
-        timerValue = temp;
+        timerValue = temp.toDouble();
       }
       isStart = await _timerService.loadIsStart();
     } else {
@@ -38,8 +38,8 @@ class TimerController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateTimer(double value) {
-    timerValue = value;
+  void updateTimer(int value) {
+    timerValue = value.toDouble();
     if (!isStart) {
       isStart = true;
     }
@@ -61,6 +61,7 @@ class TimerController extends ChangeNotifier {
   }
 
   Map<String, String> getTime() {
+    print("timerValue herer: $timerValue");
     num sec = timerValue % 60;
     num min = (timerValue / 60).floor();
     String minute = min.toString().length <= 1 ? "0$min" : "$min";

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sleek_circular_slider/sleek_circular_slider.dart';
-import 'package:sleep_timer/components/action_button/action_button.dart';
-import 'package:sleep_timer/components/main_timer_text/main_timer_text.dart';
+import 'package:sleep_timer/components/action_button.dart';
+import 'package:sleep_timer/components/my_circular_slider.dart';
+import 'package:sleep_timer/components/timer_text_vertical.dart';
 import 'package:sleep_timer/utils/app_variables.dart';
-import 'package:sleep_timer/utils/functions.dart';
 
 class CircularTheme extends StatelessWidget {
   final bool isStart;
@@ -37,78 +36,41 @@ class CircularTheme extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Center(
-                  child: SleekCircularSlider(
-                    appearance: CircularSliderAppearance(
-                      customWidths: CustomSliderWidths(
-                        trackWidth: isStart ? 0 : 5,
-                        progressBarWidth: isStart ? 0 : 16,
-                        shadowWidth: isStart ? 0 : 20,
-                      ),
-                      customColors: isStart
-                          ? CustomSliderColors(
-                              trackColor: Colors.transparent,
-                              progressBarColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                              shadowMaxOpacity: 0.0,
-                            )
-                          : CustomSliderColors(
-                              dotColor: Colors.white.withOpacity(0.8),
-                              trackColor: HexColor('#98DBFC').withOpacity(0.3),
-                              progressBarColor: HexColor('#6DCFFF'),
-                              shadowColor: HexColor('#98DBFC'),
-                              shadowStep: 14.0,
-                              shadowMaxOpacity: 0.1,
-                            ),
-                      startAngle: 270,
-                      angleRange: 360,
-                      size: 320.0,
-                      animationEnabled: true,
-                    ),
-                    min: 0,
-                    max: AppVariables.MAX_TIME,
-                    initialValue: (timerValue / 60),
-                    onChange: (value) {
-                      if (!isStart) {
-                        onSliderChange((value.floor() * 60).toDouble());
-                      }
-                    },
-                    innerWidget: (double value) {
-                      return Align(
-                        alignment: Alignment.center,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              "stop playing in".toUpperCase(),
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.grey[400]!,
-                                letterSpacing: 1.4,
-                              ),
-                            ),
-                            MainTimerText(
-                              minute: finalTime["minute"],
-                              second: finalTime["second"],
-                              isStart: isStart,
-                            )
-                          ],
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: MyCircularSlider(
+                  value: (timerValue / 60),
+                  isStart: isStart,
+                  onChange: (value) {
+                    if (!isStart) {
+                      onSliderChange((value * 60).toDouble());
+                    }
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "stop playing in".toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.grey[400]!,
+                          letterSpacing: 1.4,
                         ),
-                      );
-                    },
+                      ),
+                      const TimerTextVertical()
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
+              )
+            ],
+          )),
+          const SizedBox(height: 48),
           ActionButton(
             title: (isStart ? "stop" : "start").toUpperCase(),
             isDanger: isStart,
